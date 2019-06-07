@@ -1,6 +1,9 @@
 import re
 import numpy as np
 
+import datetime
+import calendar
+
 oneMinDataPath="/home/ebuntu3/#code/AUPloting_June2019/data/AUTUMNX_SALU_TGBO_2019_06_06_PT1M.txt"
 tenLinesData="/home/ebuntu3/#code/AUPloting_June2019/data/testData10.txt"
 
@@ -20,6 +23,12 @@ def validateLine(line,numSegments):
   #result=line.split(delimiter)
   #return result
   
+def str2Datetime(line,fmt="%Y-%m-%d %H:%M:%S"):
+  return datetime.datetime.strptime(line,fmt)
+  
+  
+def datetime2Unix(timeDate):  
+  return calendar.timegm(timeDate.timetuple())
     
 def loadData(dataPath,numSegments,delimiter=None):
   file=open(dataPath,'r')
@@ -27,29 +36,39 @@ def loadData(dataPath,numSegments,delimiter=None):
   for line in file:
     if validateLine(line,numSegments):      
       line=line.split(delimiter)
-      resultArray.append(line)
+      resultArray.append(line)      
+  return np.array(resultArray)
       
-  return resultArray
+timeStr="2019-06-06 00:00:30"    
+print(datetime2Unix(str2Datetime(timeStr)))
       
       
-      
-      
-line="2019-06-06 00:00:30.663 157     11237.35  216.91    57844.11  88888.00"
-
-#print(containLetter(line))
-#print(checkSegments(line,7))
-#print(validateLine(line,7))
-#print(dataLine2Array(line,7))
-temp=loadData(tenLinesData,7)
-a=np.array(temp)
-for x in temp:
-  print(x)
-  
-  
-print(a[:,1])
-
-#test
+#line="2019-06-06 00:00:30.663 157     11237.35  216.91    57844.11  88888.00"
 
 
+
+
+
+
+
+
+#s = "01/12/2011 01:01:01"
+#temp=datetime.datetime.strptime(s, "%d/%m/%Y %H:%M:%S")
+##temp=temp.replace(tzinfo=pytz.utc)
+###print(datetime.datetime.strptime(s, "%d/%m/%Y %H:%M:%S %Z").timetuple())
+
+
+##result=time.mktime(temp.timetuple())
+###1322701261
+##print(temp)
+##print(result)
+
+
+##test
+
+##a1=datetime.datetime(2011, 12,1, 1, 1, 1, 0)
+##print(a1)
+#a2=calendar.timegm(temp.timetuple())
+#print(a2)
     
     
