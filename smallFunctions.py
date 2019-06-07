@@ -38,37 +38,36 @@ def loadData(dataPath,numSegments,delimiter=None):
       line=line.split(delimiter)
       resultArray.append(line)      
   return np.array(resultArray)
+
+def stripTimetoInteger(time):
+  return time[:8]
+
+def createDatetime(date,time):
+  dateTime=date+' '+time  
+  dateTime=str2Datetime(dateTime)
+  return datetime2Unix(dateTime)  
+
+#def str2Int(string):
+  #return int(float(string))
+
+def extractInfoFromAUTUMN_1Min(array):
+  date=array[:,0]
+  
+  time=array[:,1]  
+  vec_stripTimetoInteger=np.vectorize(stripTimetoInteger)
+  time=vec_stripTimetoInteger(time)
+  
+  vec_createDatetime=np.vectorize(createDatetime)
+  unix=vec_createDatetime(date,time) 
+  
+  vec_float=np.vectorize(float)
+  x=vec_float(array[:,3])
+  y=vec_float(array[:,4])
+  z=vec_float(array[:,5]) 
+  
+  return unix,x,y,z
       
-timeStr="2019-06-06 00:00:30"    
-print(datetime2Unix(str2Datetime(timeStr)))
-      
-      
-#line="2019-06-06 00:00:30.663 157     11237.35  216.91    57844.11  88888.00"
+d=loadData("/home/ebuntu3/#code/AUPloting_June2019/data/testData10.txt",7)
+unix,x,y,z=extractInfoFromAUTUMN_1Min(d)
 
 
-
-
-
-
-
-
-#s = "01/12/2011 01:01:01"
-#temp=datetime.datetime.strptime(s, "%d/%m/%Y %H:%M:%S")
-##temp=temp.replace(tzinfo=pytz.utc)
-###print(datetime.datetime.strptime(s, "%d/%m/%Y %H:%M:%S %Z").timetuple())
-
-
-##result=time.mktime(temp.timetuple())
-###1322701261
-##print(temp)
-##print(result)
-
-
-##test
-
-##a1=datetime.datetime(2011, 12,1, 1, 1, 1, 0)
-##print(a1)
-#a2=calendar.timegm(temp.timetuple())
-#print(a2)
-    
-    
