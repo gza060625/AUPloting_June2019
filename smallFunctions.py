@@ -50,8 +50,8 @@ def createDatetime(date,time):
   dateTime=str2Datetime(dateTime)
   return datetime2Unix(dateTime)  
 
-#def str2Int(string):
-  #return int(float(string))
+def offsetByUTC00(array):
+  return array-array[0]
 
 
 def extractInfoFromAUTUMN_1Min(array):
@@ -69,20 +69,25 @@ def extractInfoFromAUTUMN_1Min(array):
   y=vec_float(array[:,4])
   z=vec_float(array[:,5]) 
   
+  x=offsetByUTC00(x)
+  y=offsetByUTC00(y)
+  z=offsetByUTC00(z)  
+  
   return unix,x,y,z
 
 
 def num2TimeStamp(time):
+  time=int(time)
   return '{0:02d}:00'.format(time)
 
-def findX(unix,step=2):
+def findX(unix,step):
   
   secondInHour=60*60
   
   firstData=unix[0]  
   midnightUnix=firstData-firstData%86400
   
-  stepsArray=np.arange(0,24,step)
+  stepsArray=np.arange(0,24.001,step)
   
   xTicks=stepsArray.copy()
   xTicks.fill(midnightUnix)
@@ -90,24 +95,34 @@ def findX(unix,step=2):
   
   print(xTicks)
   
-  xLables=stepsArray.copy()
-  xLables=list(map(num2TimeStamp,stepsArray))
-  print(xLables)
+  xLabels=stepsArray.copy()
+  xLabels=list(map(num2TimeStamp,stepsArray))
+  print(xLabels)
   
-  return xTicks,xLables
+  return xTicks,xLabels
+
+def setX(ax,unix,step=4):
+  ticks,labels=findX(unix,step)
+  ax.set_xticks(ticks)
+  ax.set_xticklabels(labels)  
   
+ 
 
 #inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/testData10.txt"
-##inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/AUTUMNX_SALU_TGBO_2019_06_06_PT1M.txt"
-#d=loadData(inputPath,7)
-#unix,x,y,z=extractInfoFromAUTUMN_1Min(d)
+inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/AUTUMNX_SALU_TGBO_2019_06_06_PT1M.txt"
+d=loadData(inputPath,7)
+unix,x,y,z=extractInfoFromAUTUMN_1Min(d)
 
-#_,ax=plt.subplots()
-#ax.plot(unix,x)
-
+_,ax=plt.subplots(1,3)
+ax[0].plot(unix,x)
+ax[1].plot(unix,y)
+ax[2].plot(unix,z)
+#a,b=findX(unix)
 #for label in ax.xaxis.get_ticklabels():
   #label.set_rotation(45)
 #print(unix)
-##ax.set_xticks([800000])
-##ax.set_xticklabels(['bashi'])
-#plt.show()
+for a in ax:
+  setX(a,unix,step=6)
+  #a.set_xlim(0)
+
+plt.show()
