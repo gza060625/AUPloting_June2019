@@ -12,7 +12,9 @@ import glob, os
 oneMinDataPath="/home/ebuntu3/#code/AUPloting_June2019/data/AUTUMNX_SALU_TGBO_2019_06_06_PT1M.txt"
 tenLinesData="/home/ebuntu3/#code/AUPloting_June2019/data/testData10.txt"
 
-
+#########################################################################
+##### Extract File to Data
+#########################################################################
 def containLetter(line): 
   x = re.search("[a-zA-Z]", line)
   return True if x else False
@@ -24,13 +26,9 @@ def checkSegments(line,numSegments,delimiter=None):
 def validateLine(line,numSegments):
   return True if ((not containLetter(line)) and checkSegments(line,numSegments)) else False
     
-#def dataLine2Array(line,delimiter=None):
-  #result=line.split(delimiter)
-  #return result
   
 def str2Datetime(line,fmt="%Y-%m-%d %H:%M:%S"):
-  return datetime.datetime.strptime(line,fmt)
-  
+  return datetime.datetime.strptime(line,fmt)  
   
 def datetime2Unix(timeDate):  
   return calendar.timegm(timeDate.timetuple())
@@ -77,10 +75,13 @@ def extractInfoFromAUTUMN_1Min(array):
   
   return unix,x,y,z
 
-def filePath2AUTUM_1Min(path):
-  temp=loadData(path,7)
+def filePath2AUTUM_1Min(path,numSegments):
+  temp=loadData(path,numSegments)
   return extractInfoFromAUTUMN_1Min(temp)
 
+#########################################################################
+##### Lables
+#########################################################################
 
 def num2TimeStamp(time):
   time=int(time)
@@ -99,25 +100,25 @@ def findX(unix,step):
   
   xTicks=stepsArray.copy()
   xTicks.fill(midnightUnix)
-  xTicks=xTicks+(stepsArray*secondInHour)
-  
-  #print(xTicks)
+  xTicks=xTicks+(stepsArray*secondInHour)  
   
   xLabels=stepsArray.copy()
   xLabels=list(map(num2TimeStamp,stepsArray))
-  #print(xLabels)
   
   return xTicks,xLabels
 
 def setX(ax,unix,step=4):
   ticks,labels=findX(unix,step)
-  #print(ticks)
-  #print(labels)
+
   ax.set_xticks(ticks)
   ax.set_xticklabels(labels)
-  ax.set_xlim(findMidnightUnix(unix[0]),max(unix))
+  
+  ax.set_xlim(findMidnightUnix(unix[0]),unix[0]+60*60*24)
+  
 
-
+#########################################################################
+##### File Management
+#########################################################################
 
 def matchAUTUMN(s):
   regExp=r'.*AUTUMN.?_([a-zA-Z]*)_.*'
@@ -145,17 +146,23 @@ def validateDataFiles(paths):
       result.append([matchResult,path])
   return result
 
+#########################################################################
+##### 
+#########################################################################
 
-def drawOneRow(file,xA,yA,zA):    
-  unix,x,y,z=filePath2AUTUM_1Min(file[1])
+def drawOneRow(file,xA,yA,zA,setLabels=False):    
+  unix,x,y,z=filePath2AUTUM_1Min(file[1],7)
   xA.plot(unix,x)
   #xA.grid(True,color='g', linestyle='-')
   #xA.legend()
-  xA.set_ylabel(file[0])
-  print(xA.get_xlim())
+
+  #print(xA.get_xlim())
   yA.plot(unix,y)
   zA.plot(unix,x)
-  setX(xA,unix,step=6)  #Need to factor out
+  zA.set_ylabel(file[0])
+  zA.yaxis.set_label_position("right")  
+  if setLabels:
+    setX(xA,unix,step=8)  #Need to factor out
   
   
  
@@ -167,48 +174,26 @@ def drawPlot(path):
   
   length=len(validFiles)
   
-  fig,ax=plt.subplots(length,3,sharex=True, sharey=True)
-  
+  fig,ax=plt.subplots(length,3,sharex=True, sharey=True)  
   
   
   for i in range(length):
-    drawOneRow(validFiles[i],*ax[i,:]) 
+    if i!=0:
+      drawOneRow(validFiles[i],*ax[i,:]) 
+    else:
+      drawOneRow(validFiles[i],*ax[i,:],setLabels=True)       
     
-  plt.subplots_adjust(wspace=0, hspace=0)
+  plt.subplots_adjust(wspace=0.1, hspace=0)
   
   
   return None
 
 inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/"
 drawPlot(inputPath)
-#plt.legend()
-plt.show()
-##inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/testData10.txt"
-#inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/AUTUMNX_SALU_TGBO_2019_06_06_PT1M.txt"
-#d=loadData(inputPath,7)
-#unix,x,y,z=extractInfoFromAUTUMN_1Min(d)
 
-#_,ax=plt.subplots(3,3,sharex=True, sharey=True)
+fig_size = plt.rcParams["figure.figsize"]
+print(fig_size)
 
-##ax[0,0].plot(unix,x)
-##ax[0,1].plot(unix,y)
-##ax[0,2].plot(unix,z)
-###a,b=findX(unix)
-###for label in ax.xaxis.get_ticklabels():
-  ###label.set_rotation(45)
-###print(unix)
-##for a in ax[0,:]:
-  ##setX(a,unix,step=6)
-  ###a.set_xlim(0)
-#r=findFiles("./data","*.txt")
-#r=validateDataFiles(r)
-#drawOneRow(r[0],*ax[0,:])
+plt.rcParams["figure.figsize"] = [60, 30]
+plt.savefig("test.svg",dpi=1200)
 #plt.show()
-
-
-
-#line="/home/ebuntu3/#code/AUPloting_June2019/data/AUTUMNX_SALU_TGBO_2019_06_06_PT1M.txt"
-#line="/home/ebuntu3/#code/AUPloting_June2019/data/AUTUMNX_PUVR_TGBO_2019_06_06_PT1M.txt"
-#print(matchAUTUMN(line))
-
-
