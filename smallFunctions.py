@@ -86,33 +86,36 @@ def num2TimeStamp(time):
   time=int(time)
   return '{0:02d}:00'.format(time)
 
+def findMidnightUnix(unix):
+  return unix-unix%86400
+
 def findX(unix,step):
   
-  secondInHour=60*60
+  secondInHour=60*60  
+   
+  midnightUnix=findMidnightUnix(unix[0])
   
-  firstData=unix[0]  
-  midnightUnix=firstData-firstData%86400
-  
-  stepsArray=np.arange(0,24.001,step)
+  stepsArray=np.arange(0,24,step)
   
   xTicks=stepsArray.copy()
   xTicks.fill(midnightUnix)
   xTicks=xTicks+(stepsArray*secondInHour)
   
-  print(xTicks)
+  #print(xTicks)
   
   xLabels=stepsArray.copy()
   xLabels=list(map(num2TimeStamp,stepsArray))
-  print(xLabels)
+  #print(xLabels)
   
   return xTicks,xLabels
 
 def setX(ax,unix,step=4):
   ticks,labels=findX(unix,step)
-  print(ticks)
-  print(labels)
+  #print(ticks)
+  #print(labels)
   ax.set_xticks(ticks)
-  ax.set_xticklabels(labels)  
+  ax.set_xticklabels(labels)
+  ax.set_xlim(findMidnightUnix(unix[0]),max(unix))
 
 
 
@@ -149,9 +152,10 @@ def drawOneRow(file,xA,yA,zA):
   #xA.grid(True,color='g', linestyle='-')
   #xA.legend()
   xA.set_ylabel(file[0])
+  print(xA.get_xlim())
   yA.plot(unix,y)
   zA.plot(unix,x)
-  setX(xA,unix,step=8)  #Need to factor out
+  setX(xA,unix,step=6)  #Need to factor out
   
   
  
