@@ -148,6 +148,9 @@ def drawOneRow(file,xA,yA,zA):
   xA.plot(unix,x)
   yA.plot(unix,y)
   zA.plot(unix,x)
+  setX(xA,unix,step=8)  #Need to factor out
+  
+  
  
 
 def drawPlot(path):
@@ -158,6 +161,8 @@ def drawPlot(path):
   length=len(validFiles)
   
   fig,ax=plt.subplots(length,3,sharex=True, sharey=True)
+  
+  
   
   for i in range(length):
     drawOneRow(validFiles[i],*ax[i,:]) 
