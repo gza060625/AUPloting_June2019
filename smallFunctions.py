@@ -7,6 +7,8 @@ import re
 import datetime
 import calendar
 
+import glob, os
+
 oneMinDataPath="/home/ebuntu3/#code/AUPloting_June2019/data/AUTUMNX_SALU_TGBO_2019_06_06_PT1M.txt"
 tenLinesData="/home/ebuntu3/#code/AUPloting_June2019/data/testData10.txt"
 
@@ -75,6 +77,10 @@ def extractInfoFromAUTUMN_1Min(array):
   
   return unix,x,y,z
 
+def filePath2AUTUM_1Min(path):
+  temp=loadData(path,7)
+  return extractInfoFromAUTUMN_1Min(temp)
+
 
 def num2TimeStamp(time):
   time=int(time)
@@ -103,26 +109,91 @@ def findX(unix,step):
 
 def setX(ax,unix,step=4):
   ticks,labels=findX(unix,step)
+  print(ticks)
+  print(labels)
   ax.set_xticks(ticks)
   ax.set_xticklabels(labels)  
+
+
+
+def matchAUTUMN(s):
+  regExp=r'.*AUTUMN.?_([a-zA-Z]*)_.*'
+  matchObj = re.match( regExp, s) 
+  if matchObj:    
+    return matchObj.group(1)
+  else:
+    return False
+ 
   
+def findFiles(path,regExp):
+  currentPath=os.getcwd()  
+  os.chdir(path) 
+  
+  result=[os.path.join(path,file) for file in glob.glob(regExp)]  
+  
+  os.chdir(currentPath)  
+  return result
+
+def validateDataFiles(paths):
+  result=[]
+  for path in paths:
+    matchResult=matchAUTUMN(path)
+    if matchResult:
+      result.append([matchResult,path])
+  return result
+
+
+def drawOneRow(file,xA,yA,zA):    
+  unix,x,y,z=filePath2AUTUM_1Min(file[1])
+  xA.plot(unix,x)
+  yA.plot(unix,y)
+  zA.plot(unix,x)
  
 
-#inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/testData10.txt"
-inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/AUTUMNX_SALU_TGBO_2019_06_06_PT1M.txt"
-d=loadData(inputPath,7)
-unix,x,y,z=extractInfoFromAUTUMN_1Min(d)
+def drawPlot(path):
+  
+  allFiles=findFiles("./data","*.txt")
+  validFiles=validateDataFiles(allFiles)
+  
+  length=len(validFiles)
+  
+  fig,ax=plt.subplots(length,3,sharex=True, sharey=True)
+  
+  for i in range(length):
+    drawOneRow(validFiles[i],*ax[i,:]) 
+  
+  
+  return None
 
-_,ax=plt.subplots(1,3)
-ax[0].plot(unix,x)
-ax[1].plot(unix,y)
-ax[2].plot(unix,z)
-#a,b=findX(unix)
-#for label in ax.xaxis.get_ticklabels():
-  #label.set_rotation(45)
-#print(unix)
-for a in ax:
-  setX(a,unix,step=6)
-  #a.set_xlim(0)
-
+inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/"
+drawPlot(inputPath)
 plt.show()
+##inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/testData10.txt"
+#inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/AUTUMNX_SALU_TGBO_2019_06_06_PT1M.txt"
+#d=loadData(inputPath,7)
+#unix,x,y,z=extractInfoFromAUTUMN_1Min(d)
+
+#_,ax=plt.subplots(3,3,sharex=True, sharey=True)
+
+##ax[0,0].plot(unix,x)
+##ax[0,1].plot(unix,y)
+##ax[0,2].plot(unix,z)
+###a,b=findX(unix)
+###for label in ax.xaxis.get_ticklabels():
+  ###label.set_rotation(45)
+###print(unix)
+##for a in ax[0,:]:
+  ##setX(a,unix,step=6)
+  ###a.set_xlim(0)
+#r=findFiles("./data","*.txt")
+#r=validateDataFiles(r)
+#drawOneRow(r[0],*ax[0,:])
+#plt.show()
+
+
+
+#line="/home/ebuntu3/#code/AUPloting_June2019/data/AUTUMNX_SALU_TGBO_2019_06_06_PT1M.txt"
+#line="/home/ebuntu3/#code/AUPloting_June2019/data/AUTUMNX_PUVR_TGBO_2019_06_06_PT1M.txt"
+#print(matchAUTUMN(line))
+
+
