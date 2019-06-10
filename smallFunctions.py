@@ -146,6 +146,9 @@ def validateDataFiles(paths):
 def drawOneRow(file,xA,yA,zA):    
   unix,x,y,z=filePath2AUTUM_1Min(file[1])
   xA.plot(unix,x)
+  #xA.grid(True,color='g', linestyle='-')
+  #xA.legend()
+  xA.set_ylabel(file[0])
   yA.plot(unix,y)
   zA.plot(unix,x)
   setX(xA,unix,step=8)  #Need to factor out
@@ -166,12 +169,15 @@ def drawPlot(path):
   
   for i in range(length):
     drawOneRow(validFiles[i],*ax[i,:]) 
+    
+  plt.subplots_adjust(wspace=0, hspace=0)
   
   
   return None
 
 inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/"
 drawPlot(inputPath)
+#plt.legend()
 plt.show()
 ##inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/testData10.txt"
 #inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/AUTUMNX_SALU_TGBO_2019_06_06_PT1M.txt"
