@@ -149,10 +149,15 @@ def validateDataFiles(paths):
 #########################################################################
 ##### 
 #########################################################################
-
+def timeStamp():
+  return datetime.datetime.now().strftime("%H.%M.%S")
+#########################################################################
+##### 
+#########################################################################
 def drawOneRow(file,xA,yA,zA,setLabels=False):    
   unix,x,y,z=filePath2AUTUM_1Min(file[1],7)
   xA.plot(unix,x)
+  
   #xA.grid(True,color='g', linestyle='-')
   #xA.legend()
 
@@ -161,6 +166,7 @@ def drawOneRow(file,xA,yA,zA,setLabels=False):
   zA.plot(unix,x)
   zA.set_ylabel(file[0])
   zA.yaxis.set_label_position("right")  
+  
   if setLabels:
     setX(xA,unix,step=8)  #Need to factor out
   
@@ -169,12 +175,13 @@ def drawOneRow(file,xA,yA,zA,setLabels=False):
 
 def drawPlot(path):
   
-  allFiles=findFiles("./data","*.txt")
+  allFiles=findFiles(path,"*.txt")
   validFiles=validateDataFiles(allFiles)
   
   length=len(validFiles)
   
-  fig,ax=plt.subplots(length,3,sharex=True, sharey=True)  
+  fig,ax=plt.subplots(length,3,sharex=True, sharey=True,figsize=(12,length*1.2))  
+  
   
   
   for i in range(length):
@@ -183,17 +190,19 @@ def drawPlot(path):
     else:
       drawOneRow(validFiles[i],*ax[i,:],setLabels=True)       
     
+ 
+  plt.tight_layout()
   plt.subplots_adjust(wspace=0.1, hspace=0)
-  
-  
+  fig.savefig("test"+timeStamp()+".svg",dpi=300,format='svg')
   return None
 
 inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/"
+#inputPath="/home/ebuntu3/#code/AUPloting_June2019/testData/"
 drawPlot(inputPath)
 
-fig_size = plt.rcParams["figure.figsize"]
-print(fig_size)
+#fig_size = plt.rcParams["figure.figsize"]
+#print(fig_size)
 
-plt.rcParams["figure.figsize"] = [60, 30]
-plt.savefig("test.svg",dpi=1200)
+#plt.rcParams["figure.figsize"] = [60, 90]
+#plt.savefig("test"+timeStamp()+".svg",dpi=1200,quality=95,progressive =True,papertype='letter',format='svg')
 #plt.show()
