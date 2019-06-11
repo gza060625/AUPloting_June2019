@@ -154,7 +154,17 @@ def timeStamp():
 #########################################################################
 ##### 
 #########################################################################
-def drawOneRow(file,xA,yA,zA,setLabels=False):    
+def drawOneRow(file,xA,yA,zA,setLabels=False): 
+  
+  yLenged={'fontname':'monospace',
+           'backgroundcolor':'#e2e3e5',
+            'fontweight':'bold',
+            'url':"http://google.com",
+            'fontsize':'12',
+            #'horizontalalignment ':'left'
+            }
+  
+  
   unix,x,y,z=filePath2AUTUM_1Min(file[1],7)
   xA.plot(unix,x)
   
@@ -164,13 +174,14 @@ def drawOneRow(file,xA,yA,zA,setLabels=False):
   #print(xA.get_xlim())
   yA.plot(unix,y)
   zA.plot(unix,x)
-  zA.set_ylabel(file[0])
+  #zA.set_ylabel()
+  zA.set_ylabel(file[0], rotation=0, labelpad=25,**yLenged)
   zA.yaxis.set_label_position("right")  
   
   if setLabels:
     setX(xA,unix,step=8)  #Need to factor out
   
-  
+ #-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"; 
  
 
 def drawPlot(path):
@@ -193,16 +204,14 @@ def drawPlot(path):
  
   plt.tight_layout()
   plt.subplots_adjust(wspace=0.1, hspace=0)
-  fig.savefig("test"+timeStamp()+".svg",dpi=300,format='svg')
+  plt.savefig("test"+timeStamp()+".svg",dpi=300,format='svg')
+  plt.show()
   return None
 
 inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/"
 #inputPath="/home/ebuntu3/#code/AUPloting_June2019/testData/"
 drawPlot(inputPath)
 
-#fig_size = plt.rcParams["figure.figsize"]
-#print(fig_size)
 
-#plt.rcParams["figure.figsize"] = [60, 90]
-#plt.savefig("test"+timeStamp()+".svg",dpi=1200,quality=95,progressive =True,papertype='letter',format='svg')
-#plt.show()
+
+
