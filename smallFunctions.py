@@ -180,6 +180,9 @@ def drawOneRow(file,xA,yA,zA,setLabels=False):
   
   if setLabels:
     setX(xA,unix,step=8)  #Need to factor out
+    xA.set_title("X-Field",pad=20,**yLenged)
+    yA.set_title("Y-Field",pad=20,**yLenged)
+    zA.set_title("Z-Field",pad=20,**yLenged)
   
  #-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"; 
  
@@ -208,8 +211,8 @@ def drawPlot(path):
   plt.show()
   return None
 
-inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/"
-#inputPath="/home/ebuntu3/#code/AUPloting_June2019/testData/"
+#inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/"
+inputPath="/home/ebuntu3/#code/AUPloting_June2019/testData/"
 drawPlot(inputPath)
 
 
