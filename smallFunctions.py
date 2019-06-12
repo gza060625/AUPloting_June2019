@@ -14,7 +14,7 @@ import collections
 oneMinDataPath="/home/ebuntu3/#code/AUPloting_June2019/data/AUTUMNX_SALU_TGBO_2019_06_06_PT1M.txt"
 tenLinesData="/home/ebuntu3/#code/AUPloting_June2019/data/testData10.txt"
 
-dateStr="2019 06 12"
+dateStr="2019 06 XX"
 
 #########################################################################
 ##### Extract File to Data
@@ -73,23 +73,14 @@ def extractInfoFromAUTUMN_1Min(array):
   y=vec_float(array[:,4])
   z=vec_float(array[:,5]) 
   
-  #temp=z
-  #print(len(temp))
-  #print(temp[0:10])    
-  
   x=offsetByUTC00(x)
   y=offsetByUTC00(y)
   z=offsetByUTC00(z)  
-  temp=z  
-  print(len(temp))
-  print(temp[0:100])  
-  
+ 
   return unix,x,y,z
 
 def filePath2AUTUM_1Min(path,numSegments):
   temp=loadData(path,numSegments)
-  #print(len(temp))
-  #print(temp[0])
   return extractInfoFromAUTUMN_1Min(temp)
 
 #########################################################################
@@ -170,116 +161,103 @@ def timeStamp():
 #########################################################################
 ##### 
 #########################################################################
+
 lineStyles=collections.deque(['-','--','-.',':'])
 
-
-def drawOneRow(file,xA,yA,zA,setLabels=False):  
+def drawOneRow(file,xA,yA,zA,setLabels=False):
+  
+  colors=['b','r','g']
+  
   lineStyle=lineStyles[0]
   lineStyles.rotate(1)
-  #print(lineStyle)
-  yLenged={'fontname':'monospace',
+  
+  legendObsName={'fontname':'monospace',
            'backgroundcolor':'#e2e3e5',
-            'fontweight':'bold',
-            'url':"http://google.com",
-            'fontsize':'12',
-            #'position':(0,0)
-            #'horizontalalignment ':'left'
+            'fontweight':'bold',            
+            'fontsize':'12'
             }  
   
   unix,x,y,z=filePath2AUTUM_1Min(file[1],7)
-  xA.plot(unix,x,'b',linestyle=lineStyle)
   
-  #xA.grid(True,color='g', linestyle='-')
-  #xA.legend()
-
-  #print(xA.get_xlim())
-  yA.plot(unix,y,'r',linestyle=lineStyle)
-  zA.plot(unix,x,'g',linestyle=lineStyle)
-  #zA.set_ylabel()
+  xA.plot(unix,x,colors[0],linestyle=lineStyle)  
+  yA.plot(unix,y,colors[1],linestyle=lineStyle)
+  zA.plot(unix,x,colors[2],linestyle=lineStyle)
+  
+  
+  
   #box = dict(facecolor='yellow', pad=5, alpha=0.2)
-  zA.set_ylabel(file[0], rotation=0, labelpad=25,**yLenged)
+  zA.set_ylabel(file[0], rotation=0, labelpad=30,**legendObsName)
   
-  #zA.yaxis.set_label_position("right")  
-  #zA.yaxis.set_label_coords(-0.1,1.02)
- 
   zA.yaxis.set_label_coords(1.08,0.75)
   
   
   if setLabels:
     setX(xA,unix,step=8)  #Need to factor out
-    #xA2 = xA.twinx()
     
-    
-    
-
   
- #-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"; 
 def stylePlot(fig,ax):
   
   titleStyle={'fontname':'monospace',
            'backgroundcolor':'#e2e3e5',
             'fontweight':'bold',
             'url':"http://google.com",
-            'fontsize':'12',
-            #'horizontalalignment ':'left'
+            'fontsize':'12'           
             }  
-  
-  
-  fig.set_facecolor('xkcd:mint green')
   
   rowNum,colNum=ax.shape
   
+  fig.set_facecolor('xkcd:mint green')  
   
   
   for _,subplot in np.ndenumerate(ax):   
     
     subplot.set_facecolor('xkcd:salmon')
+    
     subplot.spines['right'].set_visible(False)
-    subplot.spines['top'].set_visible(False)  
+    
+    subplot.spines['top'].set_visible(False) 
+    
     subplot.spines['bottom'].set_color('c')
     subplot.spines['bottom'].set_linewidth(3)
     subplot.spines['bottom'].set_linestyle("dashed")
     
     subplot.spines['left'].set_linewidth(3)
-    #subplot.axes().get_xaxis().set_visible(True)
+    subplot.spines['left'].set_color('c')
     
   for col in range(colNum):
     subplot=ax[rowNum-1][col]
     subplot.spines['bottom'].set_linewidth(3)
     subplot.spines['bottom'].set_visible(True) 
     subplot.spines['bottom'].set_linestyle("solid")
+    
   
-  ax[0][0].set_title("X-Field",pad=6,**titleStyle)
-  ax[0][1].set_title("Y-Field",pad=6,**titleStyle)
-  ax[0][2].set_title("Z-Field",pad=6,**titleStyle)
+  ax[0][0].set_title("X-Field",pad=8,**titleStyle)
+  ax[0][1].set_title("Y-Field",pad=8,**titleStyle)
+  ax[0][2].set_title("Z-Field",pad=8,**titleStyle)
   
   firstCol=ax[:,0]
   for axis in firstCol:
-    axis.set_ylabel("nt", labelpad=0,**titleStyle)
-    #ax.set_ylabel("nteeeeeeeeeeeee\n sefsef", labelpad=0,**titleStyle)
-    #ax.yaxis.set_label_coords(-0.1,0.90)
+    axis.set_ylabel("nt", labelpad=12,**titleStyle)
+
     
   lastRow=ax[-1,:] 
   for axis in lastRow: 
     axis.set_xlabel("UTC in Hours  "+dateStr)
-    #print("time")
-    #for label in axis.xaxis.get_ticklabels():   
-      #label.set_rotation(-45)    
+    
+    
+  #superPlot=fig.add_subplot(111, frameon=False)
+  #superPlot.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+  #plt.xlabel("Magnetic Summary plots: "+dateStr,**titleStyle,labelpad=0)
+  #plt.ylabel("TestYLabel",**titleStyle,labelpad=30)
+  #ax=plt.gca()
+  #ax.xaxis.set_label_coords(0.5,1.07)    
   
-  
-  
+  plt.tight_layout()  
+  plt.subplots_adjust(wspace=0.1, hspace=0.05)  
     
  
 
 def drawPlot(path):
-  plotTitleSyle={'fontname':'monospace',
-           'backgroundcolor':'#e2e3e5',
-            'fontweight':'bold',
-            'url':"http://google.com",
-            'fontsize':'12',
-            #'position':(0,0)
-            #'horizontalalignment ':'left'
-            }    
   
   allFiles=findFiles(path,"*.txt")
   validFiles=validateDataFiles(allFiles)
@@ -288,56 +266,23 @@ def drawPlot(path):
   
   fig,ax=plt.subplots(length,3,sharex=True, sharey=True,figsize=(12,length*1.2))  
 
-  stylePlot(fig,ax)
+  stylePlot(fig,ax) 
   
-  
-  #fig.text(0.06, 0.5, 'common ylabel', ha='center', va='center', rotation='vertical')
-  
-  
-  
+   
   for i in range(length):
     if i!=0:
       drawOneRow(validFiles[i],*ax[i,:]) 
-    else:
-      print("here")
-      drawOneRow(validFiles[i],*ax[i,:],setLabels=True)     
-      
-  #st=fig.suptitle("Title centered above all subplots", fontsize=14)
-  #st.set_y(0.95)
-  #fig.subplots_adjust(top=0.85)  
-  #fig=figure(1)
-  #plt.text(0.5, 0.95, 'test', horizontalalignment='center')
- 
-
+    else:      
+      drawOneRow(validFiles[i],*ax[i,:],setLabels=True)
   
-  superPlot=fig.add_subplot(111, frameon=False)
-  superPlot.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
-  #superPlot.grid(False) 
-  #bbox=dict(facecolor='none', edgecolor='red', pad=0)
-  plt.xlabel("Magnetic Summary plots: "+dateStr,**plotTitleSyle,labelpad=0)
-  plt.ylabel("TestYLabel",**plotTitleSyle,labelpad=30)
-  ax=plt.gca()
-  ax.xaxis.set_label_coords(0.5,1.07)  
-  #fig.suptitle('bold figure suptitle', fontsize=14, fontweight='bold',labelpad=20)
-  #plt.ylabel.set_label_position('top')
-  
-  
-  plt.tight_layout()  
-  plt.subplots_adjust(wspace=0.1, hspace=0.05)   
-  
-  
-  
-  #plt.text(0,1,"testText")
   plt.savefig("T"+timeStamp()+".svg",dpi=300,format='svg', facecolor=fig.get_facecolor())
   plt.show()
-  
-  
-  return None
 
-#inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/"
-#inputPath="/home/ebuntu3/#code/AUPloting_June2019/testData/"
-inputPath="/home/ebuntu3/#code/AUPloting_June2019/testData2/"
-drawPlot(inputPath)
+if __name__ =="__main__":
+  inputPath="/home/ebuntu3/#code/AUPloting_June2019/data0606/"
+  #inputPath="/home/ebuntu3/#code/AUPloting_June2019/testData/"
+  #inputPath="/home/ebuntu3/#code/AUPloting_June2019/testData2/"
+  drawPlot(inputPath)
 
 
 
