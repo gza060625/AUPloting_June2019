@@ -275,6 +275,8 @@ def drawPlot(path):
     else:      
       drawOneRow(validFiles[i],*ax[i,:],setLabels=True)
   
+  plt.tight_layout()
+  
   plt.savefig("T"+timeStamp()+".svg",dpi=300,format='svg', facecolor=fig.get_facecolor())
   plt.show()
 
