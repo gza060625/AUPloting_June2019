@@ -284,7 +284,7 @@ def drawPlot(path):
   plt.xlabel("testXlabel",**plotTitleSyle,labelpad=0)
   plt.ylabel("TestYLabel",**plotTitleSyle,labelpad=20)
   ax=plt.gca()
-  ax.xaxis.set_label_coords(0.5,1.065)  
+  ax.xaxis.set_label_coords(0.5,1.07)  
   #fig.suptitle('bold figure suptitle', fontsize=14, fontweight='bold',labelpad=20)
   #plt.ylabel.set_label_position('top')
   
