@@ -155,15 +155,18 @@ def timeStamp():
 ##### 
 #########################################################################
 
-yLenged={'fontname':'monospace',
-         'backgroundcolor':'#e2e3e5',
-          'fontweight':'bold',
-          'url':"http://google.com",
-          'fontsize':'12',
-          #'horizontalalignment ':'left'
-          }
 
-def drawOneRow(file,xA,yA,zA,setLabels=False):   
+
+def drawOneRow(file,xA,yA,zA,setLabels=False):
+  
+  yLenged={'fontname':'monospace',
+           'backgroundcolor':'#e2e3e5',
+            'fontweight':'bold',
+            'url':"http://google.com",
+            'fontsize':'12',
+            #'position':(0,0)
+            #'horizontalalignment ':'left'
+            }  
   
   unix,x,y,z=filePath2AUTUM_1Min(file[1],7)
   xA.plot(unix,x)
@@ -176,7 +179,10 @@ def drawOneRow(file,xA,yA,zA,setLabels=False):
   zA.plot(unix,x)
   #zA.set_ylabel()
   zA.set_ylabel(file[0], rotation=0, labelpad=25,**yLenged)
-  zA.yaxis.set_label_position("right")  
+  #zA.yaxis.set_label_position("right")  
+  #zA.yaxis.set_label_coords(-0.1,1.02)
+  zA.yaxis.set_label_coords(1.08,0.75)
+  
   
   if setLabels:
     setX(xA,unix,step=8)  #Need to factor out
@@ -184,6 +190,16 @@ def drawOneRow(file,xA,yA,zA,setLabels=False):
   
  #-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"; 
 def stylePlot(fig,ax):
+  
+  titleStyle={'fontname':'monospace',
+           'backgroundcolor':'#e2e3e5',
+            'fontweight':'bold',
+            'url':"http://google.com",
+            'fontsize':'12',
+            #'horizontalalignment ':'left'
+            }  
+  
+  
   fig.patch.set_facecolor('xkcd:mint green')
   
   rowNum,colNum=ax.shape
@@ -206,9 +222,9 @@ def stylePlot(fig,ax):
     subplot.spines['bottom'].set_visible(True) 
     subplot.spines['bottom'].set_linestyle("solid")
   
-  ax[0][0].set_title("X-Field",pad=20,**yLenged)
-  ax[0][1].set_title("Y-Field",pad=20,**yLenged)
-  ax[0][2].set_title("Z-Field",pad=20,**yLenged)
+  ax[0][0].set_title("X-Field",pad=20,**titleStyle)
+  ax[0][1].set_title("Y-Field",pad=20,**titleStyle)
+  ax[0][2].set_title("Z-Field",pad=20,**titleStyle)
   
   
   
@@ -237,13 +253,13 @@ def drawPlot(path):
     
  
   plt.tight_layout()
-  plt.subplots_adjust(wspace=0.1, hspace=0)
+  plt.subplots_adjust(wspace=0.1, hspace=0.05)
   plt.savefig("test"+timeStamp()+".svg",dpi=300,format='svg')
   plt.show()
   return None
 
-##inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/"
-inputPath="/home/ebuntu3/#code/AUPloting_June2019/testData/"
+inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/"
+#inputPath="/home/ebuntu3/#code/AUPloting_June2019/testData/"
 drawPlot(inputPath)
 
 
