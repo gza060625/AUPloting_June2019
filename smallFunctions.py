@@ -11,6 +11,8 @@ import glob, os
 
 import collections
 
+from fonts import *
+
 oneMinDataPath="/home/ebuntu3/#code/AUPloting_June2019/data/AUTUMNX_SALU_TGBO_2019_06_06_PT1M.txt"
 tenLinesData="/home/ebuntu3/#code/AUPloting_June2019/data/testData10.txt"
 
@@ -171,11 +173,7 @@ def drawOneRow(file,xA,yA,zA,setLabels=False):
   lineStyle=lineStyles[0]
   lineStyles.rotate(1)
   
-  legendObsName={'fontname':'monospace',
-           'backgroundcolor':'#e2e3e5',
-            'fontweight':'bold',            
-            'fontsize':'12'
-            }  
+
   
   unix,x,y,z=filePath2AUTUM_1Min(file[1],7)
   
@@ -188,41 +186,34 @@ def drawOneRow(file,xA,yA,zA,setLabels=False):
   #box = dict(facecolor='yellow', pad=5, alpha=0.2)
   zA.set_ylabel(file[0], rotation=0, labelpad=30,**legendObsName)
   
-  zA.yaxis.set_label_coords(1.08,0.75)
-  
+  zA.yaxis.set_label_coords(1.10,0.68)  
   
   if setLabels:
     setX(xA,unix,step=8)  #Need to factor out
     
   
 def stylePlot(fig,ax):
-  
-  titleStyle={'fontname':'monospace',
-           'backgroundcolor':'#e2e3e5',
-            'fontweight':'bold',
-            'url':"http://google.com",
-            'fontsize':'12'           
-            }  
+ 
   
   rowNum,colNum=ax.shape
   
-  fig.set_facecolor('xkcd:mint green')  
+  fig.set_facecolor(canvasColor)  
   
   
   for _,subplot in np.ndenumerate(ax):   
     
-    subplot.set_facecolor('xkcd:salmon')
+    subplot.set_facecolor(plotColor)
     
     subplot.spines['right'].set_visible(False)
     
     subplot.spines['top'].set_visible(False) 
     
-    subplot.spines['bottom'].set_color('c')
+    subplot.spines['bottom'].set_color(thickBorderColor)
     subplot.spines['bottom'].set_linewidth(3)
     subplot.spines['bottom'].set_linestyle("dashed")
     
     subplot.spines['left'].set_linewidth(3)
-    subplot.spines['left'].set_color('c')
+    subplot.spines['left'].set_color(thickBorderColor)
     
   for col in range(colNum):
     subplot=ax[rowNum-1][col]
@@ -231,29 +222,31 @@ def stylePlot(fig,ax):
     subplot.spines['bottom'].set_linestyle("solid")
     
   
-  ax[0][0].set_title("X-Field",pad=8,**titleStyle)
-  ax[0][1].set_title("Y-Field",pad=8,**titleStyle)
-  ax[0][2].set_title("Z-Field",pad=8,**titleStyle)
+  ax[0][0].set_title("X-Field",pad=8,**xyzFieldStyle)
+  ax[0][1].set_title("Y-Field",pad=8,**xyzFieldStyle)
+  ax[0][2].set_title("Z-Field",pad=8,**xyzFieldStyle)
   
   firstCol=ax[:,0]
   for axis in firstCol:
-    axis.set_ylabel("nt", labelpad=12,**titleStyle)
+    axis.set_ylabel("nt", labelpad=8,rotation=0,**unit)
 
     
   lastRow=ax[-1,:] 
   for axis in lastRow: 
-    axis.set_xlabel("UTC in Hours  "+dateStr)
+    axis.set_xlabel("UTC in Hours  "+dateStr,**xSubTitle)
     
-    
+  #############################Plot Titles################################# 
   #superPlot=fig.add_subplot(111, frameon=False)
   #superPlot.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
   #plt.xlabel("Magnetic Summary plots: "+dateStr,**titleStyle,labelpad=0)
   #plt.ylabel("TestYLabel",**titleStyle,labelpad=30)
   #ax=plt.gca()
-  #ax.xaxis.set_label_coords(0.5,1.07)    
+  #ax.xaxis.set_label_coords(0.5,1.07)   
+  ################################################################################ 
   
+  
+  plt.subplots_adjust(wspace=0.1, hspace=0)  
   plt.tight_layout()  
-  plt.subplots_adjust(wspace=0.1, hspace=0.05)  
     
  
 
