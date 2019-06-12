@@ -14,6 +14,8 @@ import collections
 oneMinDataPath="/home/ebuntu3/#code/AUPloting_June2019/data/AUTUMNX_SALU_TGBO_2019_06_06_PT1M.txt"
 tenLinesData="/home/ebuntu3/#code/AUPloting_June2019/data/testData10.txt"
 
+dateStr="2019 06 12"
+
 #########################################################################
 ##### Extract File to Data
 #########################################################################
@@ -71,14 +73,23 @@ def extractInfoFromAUTUMN_1Min(array):
   y=vec_float(array[:,4])
   z=vec_float(array[:,5]) 
   
+  #temp=z
+  #print(len(temp))
+  #print(temp[0:10])    
+  
   x=offsetByUTC00(x)
   y=offsetByUTC00(y)
   z=offsetByUTC00(z)  
+  temp=z  
+  print(len(temp))
+  print(temp[0:100])  
   
   return unix,x,y,z
 
 def filePath2AUTUM_1Min(path,numSegments):
   temp=loadData(path,numSegments)
+  #print(len(temp))
+  #print(temp[0])
   return extractInfoFromAUTUMN_1Min(temp)
 
 #########################################################################
@@ -110,13 +121,16 @@ def findX(unix,step):
   return xTicks,xLabels
 
 def setX(ax,unix,step=4):
-  ticks,labels=findX(unix,step)
+  ticks,labels=findX(unix,step) 
+  
 
   ax.set_xticks(ticks)
-  ax.set_xticklabels(labels)
+  ax.set_xticklabels(labels)    
   
   ax.set_xlim(findMidnightUnix(unix[0]),unix[0]+60*60*24)
   
+  
+
 
 #########################################################################
 ##### File Management
@@ -152,7 +166,7 @@ def validateDataFiles(paths):
 ##### 
 #########################################################################
 def timeStamp():
-  return datetime.datetime.now().strftime("%H.%M.%S")
+  return datetime.datetime.now().strftime("%_m.%H.%M.%S")
 #########################################################################
 ##### 
 #########################################################################
@@ -162,7 +176,7 @@ lineStyles=collections.deque(['-','--','-.',':'])
 def drawOneRow(file,xA,yA,zA,setLabels=False):  
   lineStyle=lineStyles[0]
   lineStyles.rotate(1)
-  print(lineStyle)
+  #print(lineStyle)
   yLenged={'fontname':'monospace',
            'backgroundcolor':'#e2e3e5',
             'fontweight':'bold',
@@ -182,14 +196,19 @@ def drawOneRow(file,xA,yA,zA,setLabels=False):
   yA.plot(unix,y,'r',linestyle=lineStyle)
   zA.plot(unix,x,'g',linestyle=lineStyle)
   #zA.set_ylabel()
+  #box = dict(facecolor='yellow', pad=5, alpha=0.2)
   zA.set_ylabel(file[0], rotation=0, labelpad=25,**yLenged)
+  
   #zA.yaxis.set_label_position("right")  
   #zA.yaxis.set_label_coords(-0.1,1.02)
+ 
   zA.yaxis.set_label_coords(1.08,0.75)
   
   
   if setLabels:
     setX(xA,unix,step=8)  #Need to factor out
+    #xA2 = xA.twinx()
+    
     
     
 
@@ -234,6 +253,19 @@ def stylePlot(fig,ax):
   ax[0][1].set_title("Y-Field",pad=6,**titleStyle)
   ax[0][2].set_title("Z-Field",pad=6,**titleStyle)
   
+  firstCol=ax[:,0]
+  for axis in firstCol:
+    axis.set_ylabel("nt", labelpad=0,**titleStyle)
+    #ax.set_ylabel("nteeeeeeeeeeeee\n sefsef", labelpad=0,**titleStyle)
+    #ax.yaxis.set_label_coords(-0.1,0.90)
+    
+  lastRow=ax[-1,:] 
+  for axis in lastRow: 
+    axis.set_xlabel("UTC in Hours  "+dateStr)
+    #print("time")
+    #for label in axis.xaxis.get_ticklabels():   
+      #label.set_rotation(-45)    
+  
   
   
     
@@ -267,6 +299,7 @@ def drawPlot(path):
     if i!=0:
       drawOneRow(validFiles[i],*ax[i,:]) 
     else:
+      print("here")
       drawOneRow(validFiles[i],*ax[i,:],setLabels=True)     
       
   #st=fig.suptitle("Title centered above all subplots", fontsize=14)
@@ -281,8 +314,8 @@ def drawPlot(path):
   superPlot.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
   #superPlot.grid(False) 
   #bbox=dict(facecolor='none', edgecolor='red', pad=0)
-  plt.xlabel("testXlabel",**plotTitleSyle,labelpad=0)
-  plt.ylabel("TestYLabel",**plotTitleSyle,labelpad=20)
+  plt.xlabel("Magnetic Summary plots: "+dateStr,**plotTitleSyle,labelpad=0)
+  plt.ylabel("TestYLabel",**plotTitleSyle,labelpad=30)
   ax=plt.gca()
   ax.xaxis.set_label_coords(0.5,1.07)  
   #fig.suptitle('bold figure suptitle', fontsize=14, fontweight='bold',labelpad=20)
@@ -292,14 +325,18 @@ def drawPlot(path):
   plt.tight_layout()  
   plt.subplots_adjust(wspace=0.1, hspace=0.05)   
   
-  plt.savefig("test"+timeStamp()+".svg",dpi=300,format='svg', facecolor=fig.get_facecolor())
+  
+  
+  #plt.text(0,1,"testText")
+  plt.savefig("T"+timeStamp()+".svg",dpi=300,format='svg', facecolor=fig.get_facecolor())
   plt.show()
   
   
   return None
 
 #inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/"
-inputPath="/home/ebuntu3/#code/AUPloting_June2019/testData/"
+#inputPath="/home/ebuntu3/#code/AUPloting_June2019/testData/"
+inputPath="/home/ebuntu3/#code/AUPloting_June2019/testData2/"
 drawPlot(inputPath)
 
 

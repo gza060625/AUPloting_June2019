@@ -33,6 +33,8 @@ fig.savefig('full_figure2.png',bbox_inches=ex.expanded(1.1,1.2))
 # Save just the portion _inside_ the second axis's boundaries
 extent = ax2.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
 
+print(extent)
+
 fig.savefig('ax2_figure.png', bbox_inches=extent)
 
 # Pad the saved area by 10% in the x-direction and 20% in the y-direction
