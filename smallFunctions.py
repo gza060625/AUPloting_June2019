@@ -9,6 +9,8 @@ import calendar
 
 import glob, os
 
+import collections
+
 oneMinDataPath="/home/ebuntu3/#code/AUPloting_June2019/data/AUTUMNX_SALU_TGBO_2019_06_06_PT1M.txt"
 tenLinesData="/home/ebuntu3/#code/AUPloting_June2019/data/testData10.txt"
 
@@ -154,11 +156,13 @@ def timeStamp():
 #########################################################################
 ##### 
 #########################################################################
+lineStyles=collections.deque(['-','--','-.',':'])
 
 
-
-def drawOneRow(file,xA,yA,zA,setLabels=False):
-  
+def drawOneRow(file,xA,yA,zA,setLabels=False):  
+  lineStyle=lineStyles[0]
+  lineStyles.rotate(1)
+  print(lineStyle)
   yLenged={'fontname':'monospace',
            'backgroundcolor':'#e2e3e5',
             'fontweight':'bold',
@@ -169,14 +173,14 @@ def drawOneRow(file,xA,yA,zA,setLabels=False):
             }  
   
   unix,x,y,z=filePath2AUTUM_1Min(file[1],7)
-  xA.plot(unix,x)
+  xA.plot(unix,x,'b',linestyle=lineStyle)
   
   #xA.grid(True,color='g', linestyle='-')
   #xA.legend()
 
   #print(xA.get_xlim())
-  yA.plot(unix,y)
-  zA.plot(unix,x)
+  yA.plot(unix,y,'r',linestyle=lineStyle)
+  zA.plot(unix,x,'g',linestyle=lineStyle)
   #zA.set_ylabel()
   zA.set_ylabel(file[0], rotation=0, labelpad=25,**yLenged)
   #zA.yaxis.set_label_position("right")  
@@ -186,6 +190,8 @@ def drawOneRow(file,xA,yA,zA,setLabels=False):
   
   if setLabels:
     setX(xA,unix,step=8)  #Need to factor out
+    
+    
 
   
  #-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"; 
@@ -200,9 +206,11 @@ def stylePlot(fig,ax):
             }  
   
   
-  fig.patch.set_facecolor('xkcd:mint green')
+  fig.set_facecolor('xkcd:mint green')
   
   rowNum,colNum=ax.shape
+  
+  
   
   for _,subplot in np.ndenumerate(ax):   
     
@@ -222,9 +230,9 @@ def stylePlot(fig,ax):
     subplot.spines['bottom'].set_visible(True) 
     subplot.spines['bottom'].set_linestyle("solid")
   
-  ax[0][0].set_title("X-Field",pad=20,**titleStyle)
-  ax[0][1].set_title("Y-Field",pad=20,**titleStyle)
-  ax[0][2].set_title("Z-Field",pad=20,**titleStyle)
+  ax[0][0].set_title("X-Field",pad=6,**titleStyle)
+  ax[0][1].set_title("Y-Field",pad=6,**titleStyle)
+  ax[0][2].set_title("Z-Field",pad=6,**titleStyle)
   
   
   
@@ -232,6 +240,14 @@ def stylePlot(fig,ax):
  
 
 def drawPlot(path):
+  plotTitleSyle={'fontname':'monospace',
+           'backgroundcolor':'#e2e3e5',
+            'fontweight':'bold',
+            'url':"http://google.com",
+            'fontsize':'12',
+            #'position':(0,0)
+            #'horizontalalignment ':'left'
+            }    
   
   allFiles=findFiles(path,"*.txt")
   validFiles=validateDataFiles(allFiles)
@@ -239,9 +255,11 @@ def drawPlot(path):
   length=len(validFiles)
   
   fig,ax=plt.subplots(length,3,sharex=True, sharey=True,figsize=(12,length*1.2))  
-  
+
   stylePlot(fig,ax)
   
+  
+  #fig.text(0.06, 0.5, 'common ylabel', ha='center', va='center', rotation='vertical')
   
   
   
@@ -249,17 +267,39 @@ def drawPlot(path):
     if i!=0:
       drawOneRow(validFiles[i],*ax[i,:]) 
     else:
-      drawOneRow(validFiles[i],*ax[i,:],setLabels=True)       
-    
+      drawOneRow(validFiles[i],*ax[i,:],setLabels=True)     
+      
+  #st=fig.suptitle("Title centered above all subplots", fontsize=14)
+  #st.set_y(0.95)
+  #fig.subplots_adjust(top=0.85)  
+  #fig=figure(1)
+  #plt.text(0.5, 0.95, 'test', horizontalalignment='center')
  
-  plt.tight_layout()
-  plt.subplots_adjust(wspace=0.1, hspace=0.05)
-  plt.savefig("test"+timeStamp()+".svg",dpi=300,format='svg')
+
+  
+  superPlot=fig.add_subplot(111, frameon=False)
+  superPlot.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+  #superPlot.grid(False) 
+  #bbox=dict(facecolor='none', edgecolor='red', pad=0)
+  plt.xlabel("testXlabel",**plotTitleSyle,labelpad=0)
+  plt.ylabel("TestYLabel",**plotTitleSyle,labelpad=20)
+  ax=plt.gca()
+  ax.xaxis.set_label_coords(0.5,1.065)  
+  #fig.suptitle('bold figure suptitle', fontsize=14, fontweight='bold',labelpad=20)
+  #plt.ylabel.set_label_position('top')
+  
+  
+  plt.tight_layout()  
+  plt.subplots_adjust(wspace=0.1, hspace=0.05)   
+  
+  plt.savefig("test"+timeStamp()+".svg",dpi=300,format='svg', facecolor=fig.get_facecolor())
   plt.show()
+  
+  
   return None
 
-inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/"
-#inputPath="/home/ebuntu3/#code/AUPloting_June2019/testData/"
+#inputPath="/home/ebuntu3/#code/AUPloting_June2019/data/"
+inputPath="/home/ebuntu3/#code/AUPloting_June2019/testData/"
 drawPlot(inputPath)
 
 
