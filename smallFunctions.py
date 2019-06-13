@@ -46,6 +46,7 @@ def datetime2Unix(timeDate):
   return calendar.timegm(timeDate.timetuple())
     
 def loadData(dataPath,numSegments,delimiter=None):
+  print(dataPath)
   file=open(dataPath,'r')
   resultArray=[]
   for line in file:
@@ -270,15 +271,18 @@ def findSize(l,k=1.5,b=2.5):
 
 def drawPlot(path):
   
-  allFiles=findFiles(path,"*.txt")
-  validFiles=validateDataFiles(allFiles)
+  # allFiles=findFiles(path,"*.txt")
+  # validFiles=validateDataFiles(allFiles)
+
+  validFiles=findFiles2(path)
+  printDictionary(validFiles)
+
   
   length=len(validFiles)  
   
 
   fig,ax=plt.subplots(length,3,sharex=True, sharey=True,figsize=(12,findSize(length)))  
   
-  #print(ax.shape)
   if ax.ndim ==1:
     ax=ax.reshape((1,3))  
 
@@ -299,8 +303,57 @@ def drawPlot(path):
   plt.savefig("T"+timeStamp()+".svg",dpi=300,format='svg', facecolor=fig.get_facecolor())
   plt.show()
 
+
+  # def findFiles(path,regExp):
+  # currentPath=os.getcwd()  
+  # os.chdir(path) 
+  
+  # result=[os.path.join(path,file) for file in glob.glob(regExp)]  
+  
+  # os.chdir(currentPath)  
+  # return result
+
+def validateFile(paths):
+  result=[]
+  for path in paths:
+    if path in AUTUMN_List+AUTUMN_X_List:
+      result.append(path)
+  return result
+  
+
+def findFiles2(path,year="2019", mon="06", day="06"):
+  currentPath=os.getcwd() 
+
+  os.chdir(path)
+  
+  result=dict()
+  regExp=path+"/*"
+
+  obsNames=[os.path.basename(file) for file in glob.glob(regExp)]   
+  obsNames=validateFile(obsNames)
+
+  for name in obsNames:
+    folderPath=os.path.join(path,name,"fluxgate",year,mon,day)+"/*.txt"
+    # print(folderPath)
+    txtFile=glob.glob(folderPath)
+    if txtFile:
+      result[name]=txtFile[0]
+
+ 
+
+  os.chdir(currentPath)
+  return result
+
+def printDictionary(d):
+  for key,val in d.items():
+      print (key, "=>", val)
+
+
 if __name__ =="__main__":
-  inputPath="/home/ebuntu3/#code/AUPloting_June2019/data0606/"
+  # inputPath="./data0606/"
+  inputPath="/autumndp/L3"
+  # r=findFiles2(inputPath)
+  # print(r)
   drawPlot(inputPath)
 
 
