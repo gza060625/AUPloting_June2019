@@ -16,6 +16,9 @@ from fonts import *
 #############################
 
 AUTUMN_X_List=['SALU','PUVR','INUK','KJPK','RADI','VLDR','STFL','SEPT','SCHF']
+AUTUMN_List=['INUV','FSJ','SLL','LARG','ATH','LABG','ATH','LABC','REDR','ROTH','LETH']
+
+
 
 
 
@@ -198,9 +201,9 @@ def drawOneRow(name,path,xA,yA,zA,setLabels=False):
     #setX(xA,unix,step=8)  #Need to factor out
     
   
-def stylePlot(fig,ax,):
+def stylePlot(fig,ax):
  
-  
+
   rowNum,colNum=ax.shape
   
   fig.set_facecolor(canvasColor)  
@@ -256,12 +259,13 @@ def stylePlot(fig,ax,):
   ################################################################################ 
   
   
-  plt.tight_layout(pad=5)
+  #plt.tight_layout(pad=padding)
   plt.subplots_adjust(wspace=0.05, hspace=0.01)
   
   #plt.autoscale()
   
-    
+def findSize(l,k=1.5,b=2.5):
+  return l*k+b
  
 
 def drawPlot(path):
@@ -269,36 +273,34 @@ def drawPlot(path):
   allFiles=findFiles(path,"*.txt")
   validFiles=validateDataFiles(allFiles)
   
-  length=len(validFiles)
+  length=len(validFiles)  
   
-  fig,ax=plt.subplots(length,3,sharex=True, sharey=True,figsize=(12,length*1.2))  
+
+  fig,ax=plt.subplots(length,3,sharex=True, sharey=True,figsize=(12,findSize(length)))  
+  
+  #print(ax.shape)
+  if ax.ndim ==1:
+    ax=ax.reshape((1,3))  
 
   stylePlot(fig,ax) 
   
+
+    
+  
   
   counter=0
-  for siteName in AUTUMN_X_List:
-    if siteName in validFiles:
-      #print(validFiles[siteName])
+  for siteName in AUTUMN_X_List+AUTUMN_List:
+    if siteName in validFiles:      
       drawOneRow(siteName,validFiles[siteName],*ax[counter,:]) 
       counter=counter+1
    
-  #for i in range(length):
-    #if i!=0:
-      #drawOneRow(validFiles[i],*ax[i,:]) 
-    #else:      
-      #drawOneRow(validFiles[i],*ax[i,:],setLabels=True)
-  
-  #plt.tight_layout()
-  #plt.autoscale()
+
   
   plt.savefig("T"+timeStamp()+".svg",dpi=300,format='svg', facecolor=fig.get_facecolor())
   plt.show()
 
 if __name__ =="__main__":
   inputPath="/home/ebuntu3/#code/AUPloting_June2019/data0606/"
-  #inputPath="/home/ebuntu3/#code/AUPloting_June2019/testData/"
-  #inputPath="/home/ebuntu3/#code/AUPloting_June2019/testData2/"
   drawPlot(inputPath)
 
 

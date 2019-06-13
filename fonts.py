@@ -1,3 +1,4 @@
+padding=2
 
 titleStyle={'fontname':'monospace',
           'backgroundcolor':'#e2e3e5',
