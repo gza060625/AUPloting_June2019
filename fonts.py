@@ -34,7 +34,10 @@ xSubTitle=unit
 
 canvasColor='#F4F7F7'
 plotColor='#A6C2BC'
-thickBorderColor='#445753'
+thickBorderColorV='#445753'
+thickBorderColorH='#F4F8F5'
+gridColor='#C8D9CD'
+tickColor=gridColor
 #xyzFieldBackgroundColor='#'
 
 

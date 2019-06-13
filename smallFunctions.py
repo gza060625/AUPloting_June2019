@@ -159,7 +159,7 @@ def validateDataFiles(paths):
 ##### 
 #########################################################################
 def timeStamp():
-  return datetime.datetime.now().strftime("%_m.%H.%M.%S")
+  return datetime.datetime.now().strftime("%_d.%H.%M.%S")
 #########################################################################
 ##### 
 #########################################################################
@@ -204,21 +204,24 @@ def stylePlot(fig,ax):
     
     subplot.set_facecolor(plotColor)
     
+    subplot.grid(color=gridColor)
+    
     subplot.spines['right'].set_visible(False)
     
     subplot.spines['top'].set_visible(False) 
     
-    subplot.spines['bottom'].set_color(thickBorderColor)
+    subplot.spines['bottom'].set_color(thickBorderColorH)
     subplot.spines['bottom'].set_linewidth(3)
     subplot.spines['bottom'].set_linestyle("dashed")
     
     subplot.spines['left'].set_linewidth(3)
-    subplot.spines['left'].set_color(thickBorderColor)
+    subplot.spines['left'].set_color(thickBorderColorV)
     
   for col in range(colNum):
     subplot=ax[rowNum-1][col]
     subplot.spines['bottom'].set_linewidth(3)
     subplot.spines['bottom'].set_visible(True) 
+    subplot.spines['bottom'].set_color(thickBorderColorV)
     subplot.spines['bottom'].set_linestyle("solid")
     
   
@@ -245,8 +248,11 @@ def stylePlot(fig,ax):
   ################################################################################ 
   
   
-  plt.subplots_adjust(wspace=0.1, hspace=0)  
-  plt.tight_layout()  
+  plt.tight_layout(pad=4)
+  plt.subplots_adjust(wspace=0.05, hspace=0.01)
+  
+  #plt.autoscale()
+  
     
  
 
@@ -268,7 +274,8 @@ def drawPlot(path):
     else:      
       drawOneRow(validFiles[i],*ax[i,:],setLabels=True)
   
-  plt.tight_layout()
+  #plt.tight_layout()
+  #plt.autoscale()
   
   plt.savefig("T"+timeStamp()+".svg",dpi=300,format='svg', facecolor=fig.get_facecolor())
   plt.show()
