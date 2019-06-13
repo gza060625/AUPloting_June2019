@@ -23,11 +23,25 @@ unit={'fontname':'monospace',
         'fontsize':'10'           
         } 
 
+
+
+###############
+#import matplotlib.pyplot as plt
+#import matplotlib.transforms as mtransforms
+#import matplotlib.patches as mpatch
+#from matplotlib.patches import FancyBboxPatch
+
+#styles = mpatch.BoxStyle.get_styles()
+#spacing = 1.2
+
+#larrow=styles['larrow']
+
 legendObsName={'fontname':'monospace',
              'backgroundcolor':'#222B29',
              'color':'#E1EAE8',
              'fontweight':'bold',            
-             'fontsize':'12'
+             'fontsize':'12',
+             #'bbox':dict(boxstyle=larrow)
         }  
 
 xSubTitle=unit

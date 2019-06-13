@@ -13,10 +13,13 @@ import collections
 
 from fonts import *
 
-oneMinDataPath="/home/ebuntu3/#code/AUPloting_June2019/data/AUTUMNX_SALU_TGBO_2019_06_06_PT1M.txt"
-tenLinesData="/home/ebuntu3/#code/AUPloting_June2019/data/testData10.txt"
+#############################
 
-dateStr="2019 06 XX"
+AUTUMN_X_List=['SALU','PUVR','INUK','KJPK','RADI','VLDR','STFL','SEPT','SCHF']
+
+
+
+dateStr="2019 06 06"
 
 #########################################################################
 ##### Extract File to Data
@@ -100,7 +103,8 @@ def findX(unix,step):
   
   secondInHour=60*60  
    
-  midnightUnix=findMidnightUnix(unix[0])
+  #midnightUnix=findMidnightUnix(unix[0])
+  midnightUnix=unix
   
   stepsArray=np.arange(0,24,step)
   
@@ -113,14 +117,18 @@ def findX(unix,step):
   
   return xTicks,xLabels
 
-def setX(ax,unix,step=4):
+def setX(ax,dateStr,step=4):
+  
+  temp=str2Datetime(dateStr,fmt="%Y %m %d")
+  unix=datetime2Unix(temp)
+  
   ticks,labels=findX(unix,step) 
   
 
   ax.set_xticks(ticks)
   ax.set_xticklabels(labels)    
   
-  ax.set_xlim(findMidnightUnix(unix[0]),unix[0]+60*60*24)
+  ax.set_xlim(unix,unix+60*60*24)
   
   
 
@@ -148,11 +156,12 @@ def findFiles(path,regExp):
   return result
 
 def validateDataFiles(paths):
-  result=[]
+  result=dict()
   for path in paths:
     matchResult=matchAUTUMN(path)
-    if matchResult:
-      result.append([matchResult,path])
+    if matchResult and matchResult in AUTUMN_X_List:      
+      result[matchResult]=path
+
   return result
 
 #########################################################################
@@ -166,7 +175,7 @@ def timeStamp():
 
 lineStyles=collections.deque(['-','--','-.',':'])
 
-def drawOneRow(file,xA,yA,zA,setLabels=False):
+def drawOneRow(name,path,xA,yA,zA,setLabels=False):
   
   colors=['b','r','g']
   
@@ -175,29 +184,28 @@ def drawOneRow(file,xA,yA,zA,setLabels=False):
   
 
   
-  unix,x,y,z=filePath2AUTUM_1Min(file[1],7)
+  unix,x,y,z=filePath2AUTUM_1Min(path,7)
   
   xA.plot(unix,x,colors[0],linestyle=lineStyle)  
   yA.plot(unix,y,colors[1],linestyle=lineStyle)
   zA.plot(unix,x,colors[2],linestyle=lineStyle)
   
-  
-  
-  #box = dict(facecolor='yellow', pad=5, alpha=0.2)
-  zA.set_ylabel(file[0], rotation=0, labelpad=30,**legendObsName)
+  zA.set_ylabel(name, rotation=0, labelpad=30,**legendObsName)
   
   zA.yaxis.set_label_coords(1.10,0.68)  
   
-  if setLabels:
-    setX(xA,unix,step=8)  #Need to factor out
+  #if setLabels:
+    #setX(xA,unix,step=8)  #Need to factor out
     
   
-def stylePlot(fig,ax):
+def stylePlot(fig,ax,):
  
   
   rowNum,colNum=ax.shape
   
   fig.set_facecolor(canvasColor)  
+  
+  setX(ax[0][0],dateStr,step=6)
   
   
   for _,subplot in np.ndenumerate(ax):   
@@ -248,7 +256,7 @@ def stylePlot(fig,ax):
   ################################################################################ 
   
   
-  plt.tight_layout(pad=4)
+  plt.tight_layout(pad=5)
   plt.subplots_adjust(wspace=0.05, hspace=0.01)
   
   #plt.autoscale()
@@ -267,12 +275,19 @@ def drawPlot(path):
 
   stylePlot(fig,ax) 
   
+  
+  counter=0
+  for siteName in AUTUMN_X_List:
+    if siteName in validFiles:
+      #print(validFiles[siteName])
+      drawOneRow(siteName,validFiles[siteName],*ax[counter,:]) 
+      counter=counter+1
    
-  for i in range(length):
-    if i!=0:
-      drawOneRow(validFiles[i],*ax[i,:]) 
-    else:      
-      drawOneRow(validFiles[i],*ax[i,:],setLabels=True)
+  #for i in range(length):
+    #if i!=0:
+      #drawOneRow(validFiles[i],*ax[i,:]) 
+    #else:      
+      #drawOneRow(validFiles[i],*ax[i,:],setLabels=True)
   
   #plt.tight_layout()
   #plt.autoscale()
