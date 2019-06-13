@@ -7,7 +7,7 @@ import re
 import datetime
 import calendar
 
-import glob, os
+import glob, os,sys
 
 import collections
 
@@ -18,11 +18,9 @@ from fonts import *
 AUTUMN_X_List=['SALU','PUVR','INUK','KJPK','RADI','VLDR','STFL','SEPT','SCHF']
 AUTUMN_List=['INUV','FSJ','SLL','LARG','ATH','LABG','ATH','LABC','REDR','ROTH','LETH']
 
+inputPath="/autumndp/L3"  #Only when number of input argument is 1
 
-
-
-
-dateStr="2019 06 06"
+# dateStr="2019 06 06"
 
 #########################################################################
 ##### Extract File to Data
@@ -121,10 +119,10 @@ def findX(unix,step):
   
   return xTicks,xLabels
 
-def setX(ax,dateStr,step=4):
+def setX(ax,date,step=4):
   
-  temp=str2Datetime(dateStr,fmt="%Y %m %d")
-  unix=datetime2Unix(temp)
+  
+  unix=datetime2Unix(date)
   
   ticks,labels=findX(unix,step) 
   
@@ -202,14 +200,16 @@ def drawOneRow(name,path,xA,yA,zA,setLabels=False):
     #setX(xA,unix,step=8)  #Need to factor out
     
   
-def stylePlot(fig,ax):
+def stylePlot(fig,ax,year,month,day):
  
-
+  dateStr=" ".join([year,month,day])
   rowNum,colNum=ax.shape
   
   fig.set_facecolor(canvasColor)  
   
-  setX(ax[0][0],dateStr,step=6)
+  currentDate=str2Datetime(dateStr,fmt="%Y %m %d")
+
+  setX(ax[0][0],currentDate,step=6)
   
   
   for _,subplot in np.ndenumerate(ax):   
@@ -269,12 +269,12 @@ def findSize(l,k=1.5,b=2.5):
   return l*k+b
  
 
-def drawPlot(path):
+def drawPlot(path,year,month,day):
   
   # allFiles=findFiles(path,"*.txt")
   # validFiles=validateDataFiles(allFiles)
 
-  validFiles=findFiles2(path)
+  validFiles=findFiles2(path,year,month,day)
   printDictionary(validFiles)
 
   
@@ -286,7 +286,7 @@ def drawPlot(path):
   if ax.ndim ==1:
     ax=ax.reshape((1,3))  
 
-  stylePlot(fig,ax) 
+  stylePlot(fig,ax,year,month,day) 
   
 
     
@@ -321,7 +321,7 @@ def validateFile(paths):
   return result
   
 
-def findFiles2(path,year="2019", mon="06", day="06"):
+def findFiles2(path,year,month,day):
   currentPath=os.getcwd() 
 
   os.chdir(path)
@@ -333,7 +333,7 @@ def findFiles2(path,year="2019", mon="06", day="06"):
   obsNames=validateFile(obsNames)
 
   for name in obsNames:
-    folderPath=os.path.join(path,name,"fluxgate",year,mon,day)+"/*.txt"
+    folderPath=os.path.join(path,name,"fluxgate",year,month,day)+"/*.txt"
     # print(folderPath)
     txtFile=glob.glob(folderPath)
     if txtFile:
@@ -348,30 +348,33 @@ def printDictionary(d):
   for key,val in d.items():
       print (key, "=>", val)
 
-def checkArguments(num=4):
+def checkArguments(num=5):
 
-  def strAndFill(num):
-    num=str(num)
-    num=num.zfill(2)
-    return num
+  def strAndFill(x):
+    x=str(x)
+    x=x.zfill(2)
+    return x
 
   length=len(sys.argv)
   if length>=num:
-    return sys.argv[1:4]
+    return sys.argv[1:5]
   if length==1:
     date=datetime.datetime.utcnow()
     date=[date.year, date.month, date.day]
     date=list(map(strAndFill,date))
-
-    return date    
+    return [inputPath]+date    
+  if length==4:
+    return [inputPath]+sys.argv[1:4]
   return False
 
 if __name__ =="__main__":
   # inputPath="./data0606/"
-  inputPath="/autumndp/L3"
+
+  # inputPath="/autumndp/L3"
+  arguments=checkArguments()
   # r=findFiles2(inputPath)
   # print(r)
-  drawPlot(inputPath)
+  drawPlot(*arguments)
 
 
 
