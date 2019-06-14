@@ -3,9 +3,7 @@ import matplotlib.pyplot as plt
 
 import re
 
-
-import datetime
-import calendar
+import datetime,calendar
 
 import glob, os,sys
 
@@ -20,7 +18,6 @@ AUTUMN_List=['INUV','FSJ','SLL','LARG','ATH','LABG','ATH','LABC','REDR','ROTH','
 
 inputPath="/autumndp/L3"  #Only when number of input argument is 1
 
-# dateStr="2019 06 06"
 
 #########################################################################
 ##### Extract File to Data
@@ -119,21 +116,16 @@ def findX(unix,step):
   
   return xTicks,xLabels
 
-def setX(ax,date,step=4):
-  
+def setX(ax,date,step=4): 
   
   unix=datetime2Unix(date)
-  
-  ticks,labels=findX(unix,step) 
-  
+
+  ticks,labels=findX(unix,step)   
 
   ax.set_xticks(ticks)
   ax.set_xticklabels(labels)    
   
   ax.set_xlim(unix,unix+60*60*24)
-  
-  
-
 
 #########################################################################
 ##### File Management
@@ -148,7 +140,7 @@ def matchAUTUMN(s):
     return False
  
   
-def findFiles(path,regExp):
+def findFilesInOneFOlder(path,regExp):
   currentPath=os.getcwd()  
   os.chdir(path) 
   
@@ -157,48 +149,22 @@ def findFiles(path,regExp):
   os.chdir(currentPath)  
   return result
 
-def validateDataFiles(paths):
+def validateFilesInOneFolder(paths):
   result=dict()
   for path in paths:
     matchResult=matchAUTUMN(path)
     if matchResult and matchResult in AUTUMN_X_List:      
       result[matchResult]=path
-
   return result
 
 #########################################################################
-##### 
+#####Auxilary 
 #########################################################################
 def timeStamp():
   return datetime.datetime.now().strftime("%_d.%H.%M.%S")
 #########################################################################
-##### 
-#########################################################################
-
-#lineStyles=collections.deque(['-','--','-.',':'])
-
-def drawOneRow(name,unix,x,y,z,xA,yA,zA,setLabels=False):
-  
-  colors=['b','r','g']
-  
-  #lineStyle=lineStyles[0]
-  #lineStyles.rotate(1)
-  
-
-  
-  #unix,x,y,z=filePath2AUTUM_1Min(path,7)
-  
-  xA.plot(unix,x,colors[0])  
-  yA.plot(unix,y,colors[1])
-  zA.plot(unix,x,colors[2])
-  
-  zA.set_ylabel(name, rotation=0, labelpad=30,**legendObsName)
-  
-  zA.yaxis.set_label_coords(1.10,0.68)  
-  
-  #if setLabels:
-    #setX(xA,unix,step=8)  #Need to factor out
-    
+##### Drawing
+#########################################################################    
   
 def stylePlot(fig,ax,year,month,day):
  
@@ -208,7 +174,6 @@ def stylePlot(fig,ax,year,month,day):
   fig.set_facecolor(canvasColor)  
   
   currentDate=str2Datetime(dateStr,fmt="%Y %m %d")
-
   setX(ax[0][0],currentDate,step=6)
   
   
@@ -281,9 +246,7 @@ def findSDeviation(array):
   array=rejectOutliers(array)
   [print(x) for x in array]  
   
-  numOfData=np.sum(array[:,0])  
-  
-  
+  numOfData=np.sum(array[:,0])   
   
   temp=[n*std*std for n,std in array] 
   SDeviation=np.sqrt(np.sum(temp)/(numOfData))
@@ -291,19 +254,33 @@ def findSDeviation(array):
   print(SDeviation)
   return SDeviation
 
+def drawOneRow(name,unix,x,y,z,xA,yA,zA,setLabels=False):
+  
+  #lineStyles=collections.deque(['-','--','-.',':'])
+  #lineStyle=lineStyles[0]
+  #lineStyles.rotate(1)
+
+  colors=['b','r','g']  
+  
+  xA.plot(unix,x,colors[0])  
+  yA.plot(unix,y,colors[1])
+  zA.plot(unix,x,colors[2])
+  
+  zA.set_ylabel(name, rotation=0, labelpad=30,**legendObsName)  
+  zA.yaxis.set_label_coords(1.10,0.68)
+
 
 def drawPlot(path,year,month,day):
   
-  allFiles=findFiles(path,"*.txt")
-  validFiles=validateDataFiles(allFiles)  
+  allFiles=findFilesInOneFOlder(path,"*.txt")
+  validatedFiles=validateFilesInOneFolder(allFiles)  
 
-  #validFiles=findFiles2(path,year,month,day)
+  #validatedFiles=findFilesInServer(path,year,month,day)  
   
-  
-  printDictionary(validFiles)
+  printDictionary(validatedFiles)
 
   
-  length=len(validFiles)  
+  length=len(validatedFiles)  
   
 
   fig,ax=plt.subplots(length,3,sharex=True, sharey=True,figsize=(12,findSize(length)))  
@@ -311,15 +288,14 @@ def drawPlot(path,year,month,day):
   if ax.ndim ==1:
     ax=ax.reshape((1,3))  
 
-  stylePlot(fig,ax,year,month,day) 
-  
+  stylePlot(fig,ax,year,month,day)   
 
 
   stats=[]
   counter=0
   for siteName in AUTUMN_X_List+AUTUMN_List:  #To keep the sequence required
-    if siteName in validFiles: 
-      unix,x,y,z=filePath2AUTUM_1Min(validFiles[siteName],7)
+    if siteName in validatedFiles: 
+      unix,x,y,z=filePath2AUTUM_1Min(validatedFiles[siteName],7)
       stats.append([len(unix),np.std(x)])
       stats.append([len(unix),np.std(y)])
       stats.append([len(unix),np.std(z)])
@@ -331,12 +307,8 @@ def drawPlot(path,year,month,day):
   SDeviation=findSDeviation(stats)
   plt.ylim(-SDeviation*10, SDeviation*10)
   
-  #plt.savefig("T"+timeStamp()+".svg",dpi=300,format='svg', facecolor=fig.get_facecolor())
-  plt.show()
-
-
-
-  
+  plt.savefig("T"+timeStamp()+".svg",dpi=300,format='svg', facecolor=fig.get_facecolor())
+  plt.show()  
   
 
 def validateFile(paths):
@@ -347,7 +319,7 @@ def validateFile(paths):
   return result
   
 
-def findFiles2(path,year,month,day):
+def findFilesInServer(path,year,month,day):
   currentPath=os.getcwd() 
 
   os.chdir(path)
@@ -390,13 +362,12 @@ def checkArguments(num=5):
     return [inputPath]+sys.argv[1:4]
   return False
 
-if __name__ =="__main__":
-  
+if __name__ =="__main__": 
 
   #arguments=checkArguments()
   
-  path="/home/ebuntu3/#code/AUPloting_June2019/data0606"
-  arguments=[path,"2019","06","06"]
+  path="/home/ebuntu3/#code/AUPloting_June2019/data0605"
+  arguments=[path,"2019","06","05"]
   drawPlot(*arguments)
 
 
