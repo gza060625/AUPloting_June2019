@@ -62,7 +62,7 @@ def createDatetime(date,time):
   return datetime2Unix(dateTime)  
 
 def offsetByUTC00(array):
-  return array-array[0]
+  return array-np.average(array)
 
 
 def extractInfoFromAUTUMN_1Min(array):
@@ -175,22 +175,22 @@ def timeStamp():
 ##### 
 #########################################################################
 
-lineStyles=collections.deque(['-','--','-.',':'])
+#lineStyles=collections.deque(['-','--','-.',':'])
 
-def drawOneRow(name,path,xA,yA,zA,setLabels=False):
+def drawOneRow(name,unix,x,y,z,xA,yA,zA,setLabels=False):
   
   colors=['b','r','g']
   
-  lineStyle=lineStyles[0]
-  lineStyles.rotate(1)
+  #lineStyle=lineStyles[0]
+  #lineStyles.rotate(1)
   
 
   
-  unix,x,y,z=filePath2AUTUM_1Min(path,7)
+  #unix,x,y,z=filePath2AUTUM_1Min(path,7)
   
-  xA.plot(unix,x,colors[0],linestyle=lineStyle)  
-  yA.plot(unix,y,colors[1],linestyle=lineStyle)
-  zA.plot(unix,x,colors[2],linestyle=lineStyle)
+  xA.plot(unix,x,colors[0])  
+  yA.plot(unix,y,colors[1])
+  zA.plot(unix,x,colors[2])
   
   zA.set_ylabel(name, rotation=0, labelpad=30,**legendObsName)
   
@@ -223,7 +223,7 @@ def stylePlot(fig,ax,year,month,day):
     subplot.spines['top'].set_visible(False) 
     
     subplot.spines['bottom'].set_color(thickBorderColorH)
-    subplot.spines['bottom'].set_linewidth(3)
+    subplot.spines['bottom'].set_linewidth(6)
     subplot.spines['bottom'].set_linestyle("dashed")
     
     subplot.spines['left'].set_linewidth(3)
@@ -261,20 +261,45 @@ def stylePlot(fig,ax,year,month,day):
   
   
   #plt.tight_layout(pad=padding)
-  plt.subplots_adjust(wspace=0.05, hspace=0.01)
+  plt.subplots_adjust(wspace=0.05, hspace=0.04)
   
   #plt.autoscale()
   
 def findSize(l,k=1.5,b=2.5):
   return l*k+b
- 
+
+def rejectOutliers(array):
+  average=np.average(array[:,1])
+  std=np.std(array[:,1])
+  limit=std*3
+  mask=[ average-limit<=x<=average+limit for x in array[:,1]]
+  print(mask)
+  return array[mask]
+
+def findSDeviation(array):
+  array=np.array(array) 
+  array=rejectOutliers(array)
+  [print(x) for x in array]  
+  
+  numOfData=np.sum(array[:,0])  
+  
+  
+  
+  temp=[n*std*std for n,std in array] 
+  SDeviation=np.sqrt(np.sum(temp)/(numOfData))
+  
+  print(SDeviation)
+  return SDeviation
+
 
 def drawPlot(path,year,month,day):
   
-  # allFiles=findFiles(path,"*.txt")
-  # validFiles=validateDataFiles(allFiles)
+  allFiles=findFiles(path,"*.txt")
+  validFiles=validateDataFiles(allFiles)  
 
-  validFiles=findFiles2(path,year,month,day)
+  #validFiles=findFiles2(path,year,month,day)
+  
+  
   printDictionary(validFiles)
 
   
@@ -289,29 +314,30 @@ def drawPlot(path,year,month,day):
   stylePlot(fig,ax,year,month,day) 
   
 
-    
-  
-  
-  counter=0
-  for siteName in AUTUMN_X_List+AUTUMN_List:
-    if siteName in validFiles:      
-      drawOneRow(siteName,validFiles[siteName],*ax[counter,:]) 
-      counter=counter+1
-   
 
+  stats=[]
+  counter=0
+  for siteName in AUTUMN_X_List+AUTUMN_List:  #To keep the sequence required
+    if siteName in validFiles: 
+      unix,x,y,z=filePath2AUTUM_1Min(validFiles[siteName],7)
+      stats.append([len(unix),np.std(x)])
+      stats.append([len(unix),np.std(y)])
+      stats.append([len(unix),np.std(z)])
+      drawOneRow(siteName,unix,x,y,z,*ax[counter,:]) 
+      counter=counter+1
   
-  plt.savefig("T"+timeStamp()+".svg",dpi=300,format='svg', facecolor=fig.get_facecolor())
+  #[print(x) for x in stats]
+   
+  SDeviation=findSDeviation(stats)
+  plt.ylim(-SDeviation*10, SDeviation*10)
+  
+  #plt.savefig("T"+timeStamp()+".svg",dpi=300,format='svg', facecolor=fig.get_facecolor())
   plt.show()
 
 
-  # def findFiles(path,regExp):
-  # currentPath=os.getcwd()  
-  # os.chdir(path) 
+
   
-  # result=[os.path.join(path,file) for file in glob.glob(regExp)]  
   
-  # os.chdir(currentPath)  
-  # return result
 
 def validateFile(paths):
   result=[]
@@ -338,9 +364,6 @@ def findFiles2(path,year,month,day):
     txtFile=glob.glob(folderPath)
     if txtFile:
       result[name]=txtFile[0]
-
- 
-
   os.chdir(currentPath)
   return result
 
@@ -368,12 +391,12 @@ def checkArguments(num=5):
   return False
 
 if __name__ =="__main__":
-  # inputPath="./data0606/"
+  
 
-  # inputPath="/autumndp/L3"
-  arguments=checkArguments()
-  # r=findFiles2(inputPath)
-  # print(r)
+  #arguments=checkArguments()
+  
+  path="/home/ebuntu3/#code/AUPloting_June2019/data0606"
+  arguments=[path,"2019","06","06"]
   drawPlot(*arguments)
 
 

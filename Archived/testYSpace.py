@@ -6,7 +6,7 @@ s = np.exp(-t)
 plt.plot(t, s)
 
 plt.xlim(-5, 5)  # decreasing time
-
+plt.ylim(-5, 5)  # decreasing time
 plt.xlabel('decreasing time (s)')
 plt.ylabel('voltage (mV)')
 plt.title('Should be growing...')
