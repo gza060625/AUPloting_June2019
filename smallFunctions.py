@@ -162,6 +162,15 @@ def validateFilesInOneFolder(paths):
 #########################################################################
 def timeStamp():
   return datetime.datetime.now().strftime("%_d.%H.%M.%S")
+
+def printDictionary(d):
+  for key,val in d.items():
+      print (key, "=>", val)
+
+def strAndFill(x):
+  x=str(x)
+  x=x.zfill(2)
+  return x
 #########################################################################
 ##### Drawing
 #########################################################################    
@@ -339,16 +348,9 @@ def findFilesInServer(path,year,month,day):
   os.chdir(currentPath)
   return result
 
-def printDictionary(d):
-  for key,val in d.items():
-      print (key, "=>", val)
+
 
 def checkArguments(num=5):
-
-  def strAndFill(x):
-    x=str(x)
-    x=x.zfill(2)
-    return x
 
   length=len(sys.argv)
   if length>=num:
@@ -362,13 +364,31 @@ def checkArguments(num=5):
     return [inputPath]+sys.argv[1:4]
   return False
 
+def callRangeOfDate():
+  path=inputPath
+  counter=10
+  end=datetime.datetime(2019,6,14)
+
+  for i in range(counter):
+    year=strAndFill(end.year)
+    month=strAndFill(end.month)
+    day=strAndFill(end.day)
+    end=end-datetime.timedelta(1)
+
+    arguments=[path,year,month,day]
+    print(arguments)
+    # drawPlot(*arguments)
+  return None
+
 if __name__ =="__main__": 
 
   #arguments=checkArguments()
   
-  path="/home/ebuntu3/#code/AUPloting_June2019/data0605"
-  arguments=[path,"2019","06","05"]
-  drawPlot(*arguments)
+  # path="/home/ebuntu3/#code/AUPloting_June2019/data0605"
+  # arguments=[path,"2019","06","05"]
+  # drawPlot(*arguments)
+
+  callRangeOfDate()
 
 
 
