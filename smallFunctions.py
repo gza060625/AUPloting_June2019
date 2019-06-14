@@ -92,6 +92,7 @@ def filePath2AUTUM_1Min(path,numSegments):
 #########################################################################
 
 def num2TimeStamp(time):
+  return None
   time=int(time)
   return '{0:02d}:00'.format(time)
 
@@ -161,7 +162,7 @@ def validateFilesInOneFolder(paths):
 #####Auxilary 
 #########################################################################
 def timeStamp():
-  return datetime.datetime.now().strftime("%_d.%H.%M.%S")
+  return datetime.datetime.now().strftime(".%H.%M.%S")
 
 def printDictionary(d):
   for key,val in d.items():
@@ -247,20 +248,20 @@ def rejectOutliers(array):
   std=np.std(array[:,1])
   limit=std*3
   mask=[ average-limit<=x<=average+limit for x in array[:,1]]
-  print(mask)
+  # print(mask)
   return array[mask]
 
 def findSDeviation(array):
   array=np.array(array) 
   array=rejectOutliers(array)
-  [print(x) for x in array]  
+  # [print(x) for x in array]  
   
   numOfData=np.sum(array[:,0])   
   
   temp=[n*std*std for n,std in array] 
   SDeviation=np.sqrt(np.sum(temp)/(numOfData))
   
-  print(SDeviation)
+  # print(SDeviation)
   return SDeviation
 
 def drawOneRow(name,unix,x,y,z,xA,yA,zA,setLabels=False):
@@ -280,16 +281,23 @@ def drawOneRow(name,unix,x,y,z,xA,yA,zA,setLabels=False):
 
 
 def drawPlot(path,year,month,day):
-  
-  allFiles=findFilesInOneFOlder(path,"*.txt")
-  validatedFiles=validateFilesInOneFolder(allFiles)  
 
-  #validatedFiles=findFilesInServer(path,year,month,day)  
+  dateString="-".join([year,month,day])  
+  print("Working On: "+dateString)
   
-  printDictionary(validatedFiles)
+  # allFiles=findFilesInOneFOlder(path,"*.txt")
+  # validatedFiles=validateFilesInOneFolder(allFiles)  
+
+  validatedFiles=findFilesInServer(path,year,month,day)  
+  
+  # printDictionary(validatedFiles)
 
   
   length=len(validatedFiles)  
+
+  if length==0:
+    print("No valid Files Found : "+dateString+"\n")
+    return
   
 
   fig,ax=plt.subplots(length,3,sharex=True, sharey=True,figsize=(12,findSize(length)))  
@@ -316,8 +324,8 @@ def drawPlot(path,year,month,day):
   SDeviation=findSDeviation(stats)
   plt.ylim(-SDeviation*10, SDeviation*10)
   
-  plt.savefig("T"+timeStamp()+".svg",dpi=300,format='svg', facecolor=fig.get_facecolor())
-  plt.show()  
+  plt.savefig("StackPlot_"+dateString+timeStamp()+"."+saveType,dpi=300,format=saveType, facecolor=fig.get_facecolor())
+  # plt.show()  
   
 
 def validateFile(paths):
@@ -366,8 +374,8 @@ def checkArguments(num=5):
 
 def callRangeOfDate():
   path=inputPath
-  counter=10
-  end=datetime.datetime(2019,6,14)
+  counter=200
+  end=datetime.datetime(2019,6,6)
 
   for i in range(counter):
     year=strAndFill(end.year)
@@ -376,16 +384,18 @@ def callRangeOfDate():
     end=end-datetime.timedelta(1)
 
     arguments=[path,year,month,day]
-    print(arguments)
-    # drawPlot(*arguments)
+    # print(arguments)
+    drawPlot(*arguments)
   return None
 
 if __name__ =="__main__": 
 
-  #arguments=checkArguments()
+  # arguments=checkArguments()
   
   # path="/home/ebuntu3/#code/AUPloting_June2019/data0605"
   # arguments=[path,"2019","06","05"]
+
+  # print(arguments)
   # drawPlot(*arguments)
 
   callRangeOfDate()

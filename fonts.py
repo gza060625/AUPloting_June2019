@@ -1,5 +1,7 @@
 padding=2
 
+saveType="png"
+
 titleStyle={'fontname':'monospace',
           'backgroundcolor':'#e2e3e5',
        'fontweight':'bold',
