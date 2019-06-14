@@ -358,6 +358,7 @@ def findFilesInServer(path,year,month,day):
     if txtFile:
       result[name]=txtFile[0]
   os.chdir(currentPath)
+  print(result)
   return result
 
 
@@ -378,8 +379,8 @@ def checkArguments(num=5):
 
 def callRangeOfDate():
   path=inputPath
-  counter=300
-  end=datetime.datetime(2019,3,3)
+  counter=1
+  end=datetime.datetime(2019,3,11)
 
   for i in range(counter):
     print("Remains: "+str(counter-i))
