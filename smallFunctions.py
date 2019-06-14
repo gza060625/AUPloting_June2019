@@ -236,7 +236,7 @@ def stylePlot(fig,ax,year,month,day):
   
   
   #plt.tight_layout(pad=padding)
-  plt.subplots_adjust(wspace=0.05, hspace=0.04)
+  plt.subplots_adjust(wspace=0.05, hspace=0.12)
   
   #plt.autoscale()
   
@@ -244,10 +244,16 @@ def findSize(l,k=1.5,b=2.5):
   return l*k+b
 
 def rejectOutliers(array):
+
+  mask=[x<1000 for x in array[:,1]]
+  array=array[mask]
+
+
   average=np.average(array[:,1])
   std=np.std(array[:,1])
+  print(average)
   # print(average,std)
-  limit=std*3
+  limit=std*6
   mask=[ average-limit<=x<=average+limit for x in array[:,1]]
   # print(mask)
   return array[mask]
@@ -262,7 +268,7 @@ def findSDeviation(array):
   temp=[n*std*std for n,std in array] 
   SDeviation=np.sqrt(np.sum(temp)/(numOfData))
   
-  # print(SDeviation)
+  print(SDeviation)
   return SDeviation
 
 def drawOneRow(name,unix,x,y,z,xA,yA,zA,setLabels=False):
@@ -324,8 +330,9 @@ def drawPlot(path,year,month,day):
   #[print(x) for x in stats]
    
   SDeviation=findSDeviation(stats)
-  SDeviation=min(SDeviation,30)
-  limit=SDeviation*10
+  limit=min(SDeviation*15 ,2000)
+  print("SDeviation: ",SDeviation)
+  print("limit: ",limit)
   plt.ylim(-limit, limit)
   
   plt.savefig("StackPlot_"+dateString+timeStamp()+"."+saveType,dpi=300,format=saveType, facecolor=fig.get_facecolor())
@@ -358,7 +365,7 @@ def findFilesInServer(path,year,month,day):
     if txtFile:
       result[name]=txtFile[0]
   os.chdir(currentPath)
-  print(result)
+  # print(result)
   return result
 
 
@@ -379,8 +386,8 @@ def checkArguments(num=5):
 
 def callRangeOfDate():
   path=inputPath
-  counter=1
-  end=datetime.datetime(2019,3,11)
+  counter=100
+  end=datetime.datetime(2019,6,14)
 
   for i in range(counter):
     print("Remains: "+str(counter-i))
@@ -399,10 +406,14 @@ if __name__ =="__main__":
   # arguments=checkArguments()
   
   # path="/home/ebuntu3/#code/AUPloting_June2019/data0605"
+  path='/autumndp/L3/'
   # arguments=[path,"2019","06","05"]
 
   # print(arguments)
   # drawPlot(*arguments)
+  # drawPlot(path,"2019","03","12")
+  # drawPlot(path,"2019","04","10")
+  # drawPlot(path,"2019","05","14")
 
   callRangeOfDate()
 
