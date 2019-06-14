@@ -41,7 +41,7 @@ def datetime2Unix(timeDate):
   return calendar.timegm(timeDate.timetuple())
     
 def loadData(dataPath,numSegments,delimiter=None):
-  print(dataPath)
+  # print(dataPath)
   file=open(dataPath,'r')
   resultArray=[]
   for line in file:
@@ -313,6 +313,7 @@ def drawPlot(path,year,month,day):
   for siteName in AUTUMN_X_List+AUTUMN_List:  #To keep the sequence required
     if siteName in validatedFiles: 
       unix,x,y,z=filePath2AUTUM_1Min(validatedFiles[siteName],7)
+      print(siteName,' ',dateString)
       stats.append([len(unix),np.std(x)])
       stats.append([len(unix),np.std(y)])
       stats.append([len(unix),np.std(z)])
