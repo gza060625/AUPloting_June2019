@@ -91,8 +91,7 @@ def filePath2AUTUM_1Min(path,numSegments):
 ##### Lables
 #########################################################################
 
-def num2TimeStamp(time):
-  return None
+def num2TimeStamp(time):  
   time=int(time)
   return '{0:02d}:00'.format(time)
 
@@ -162,6 +161,7 @@ def validateFilesInOneFolder(paths):
 #####Auxilary 
 #########################################################################
 def timeStamp():
+  return ''
   return datetime.datetime.now().strftime(".%H.%M.%S")
 
 def printDictionary(d):
@@ -324,7 +324,9 @@ def drawPlot(path,year,month,day):
   #[print(x) for x in stats]
    
   SDeviation=findSDeviation(stats)
-  plt.ylim(-SDeviation*10, SDeviation*10)
+  SDeviation=min(SDeviation,30)
+  limit=SDeviation*10
+  plt.ylim(-limit, limit)
   
   plt.savefig("StackPlot_"+dateString+timeStamp()+"."+saveType,dpi=300,format=saveType, facecolor=fig.get_facecolor())
   # plt.show()  
@@ -376,11 +378,11 @@ def checkArguments(num=5):
 
 def callRangeOfDate():
   path=inputPath
-  counter=200
-  end=datetime.datetime(2019,3,1)
+  counter=300
+  end=datetime.datetime(2019,3,3)
 
   for i in range(counter):
-    print("Remains: "+str(counter-i-1))
+    print("Remains: "+str(counter-i))
     year=strAndFill(end.year)
     month=strAndFill(end.month)
     day=strAndFill(end.day)
