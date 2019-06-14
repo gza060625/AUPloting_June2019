@@ -246,6 +246,7 @@ def findSize(l,k=1.5,b=2.5):
 def rejectOutliers(array):
   average=np.average(array[:,1])
   std=np.std(array[:,1])
+  # print(average,std)
   limit=std*3
   mask=[ average-limit<=x<=average+limit for x in array[:,1]]
   # print(mask)
@@ -376,9 +377,10 @@ def checkArguments(num=5):
 def callRangeOfDate():
   path=inputPath
   counter=200
-  end=datetime.datetime(2019,6,6)
+  end=datetime.datetime(2019,3,1)
 
   for i in range(counter):
+    print("Remains: "+str(counter-i-1))
     year=strAndFill(end.year)
     month=strAndFill(end.month)
     day=strAndFill(end.day)
