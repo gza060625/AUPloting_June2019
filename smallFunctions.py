@@ -15,6 +15,7 @@ from fonts import *
 
 AUTUMN_X_List=['SALU','PUVR','INUK','KJPK','RADI','VLDR','STFL','SEPT','SCHF']
 AUTUMN_List=['INUV','FSJ','SLL','LARG','ATH','LABG','ATH','LABC','REDR','ROTH','LETH']
+AUTUMN_List=[]
 
 inputPath="/autumndp/L3"  #Only when number of input argument is 1
 
@@ -218,7 +219,7 @@ def stylePlot(fig,ax,year,month,day):
   
   firstCol=ax[:,0]
   for axis in firstCol:
-    axis.set_ylabel("nt", labelpad=8,rotation=0,**unit)
+    axis.set_ylabel("nt", labelpad=10,rotation=0,**unit)
 
     
   lastRow=ax[-1,:] 
@@ -300,11 +301,12 @@ def drawPlot(path,year,month,day):
   # printDictionary(validatedFiles)
 
   
-  length=len(validatedFiles)  
+  # length=len(validatedFiles)  
+  length=len(AUTUMN_X_List)  
 
-  if length==0:
-    print("No valid Files Found : "+dateString+"\n")
-    return
+  # if length==0:
+  #   print("No valid Files Found : "+dateString+"\n")
+  #   return
   
 
   fig,ax=plt.subplots(length,3,sharex=True, sharey=True,figsize=(12,findSize(length)))  
@@ -321,23 +323,26 @@ def drawPlot(path,year,month,day):
     if siteName in validatedFiles: 
       unix,x,y,z=filePath2AUTUM_1Min(validatedFiles[siteName],7)
       print(siteName,' ',dateString)
-      stats.append([len(unix),np.std(x)])
-      stats.append([len(unix),np.std(y)])
-      stats.append([len(unix),np.std(z)])
-      drawOneRow(siteName,unix,x,y,z,*ax[counter,:]) 
-      counter=counter+1
+      # stats.append([len(unix),np.std(x)])
+      # stats.append([len(unix),np.std(y)])
+      # stats.append([len(unix),np.std(z)])
+      drawOneRow(siteName,unix,x,y,z,*ax[counter,:])
+    else:
+      drawOneRow(siteName,[],[],[],[],*ax[counter,:])
+    counter=counter+1
   
   #[print(x) for x in stats]
    
-  SDeviation=findSDeviation(stats)
-  limit=min(SDeviation*20 ,3000)
-  print("SDeviation: ",SDeviation)
-  print("limit: ",limit)
+  # SDeviation=findSDeviation(stats)
+  # limit=min(SDeviation*20 ,3000)
+  # print("SDeviation: ",SDeviation)
+  # print("limit: ",limit)
   # plt.ylim(-limit, limit) 
 
 
   plt.savefig("./tempDir/StackPlot_"+dateString+timeStamp()+"."+saveType,dpi=300,format=saveType, facecolor=fig.get_facecolor(),bbox_inches='tight')
   # plt.show()  
+  plt.close()
   
 
 def validateFile(paths):
@@ -387,7 +392,7 @@ def checkArguments(num=5):
 
 def callRangeOfDate():
   path=inputPath
-  counter=120
+  counter=100
   end=datetime.datetime(2019,6,14)
 
   for i in range(counter):
