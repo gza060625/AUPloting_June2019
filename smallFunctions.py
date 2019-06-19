@@ -15,7 +15,7 @@ from fonts import *
 
 AUTUMN_X_List=['SALU','PUVR','INUK','KJPK','RADI','VLDR','STFL','SEPT','SCHF']
 AUTUMN_List=['INUV','FSJ','SLL','LARG','ATH','LABG','ATH','LABC','REDR','ROTH','LETH']
-AUTUMN_List=[]
+requiredObsList=[]
 
 inputPath="/autumndp/L3"  #Only when number of input argument is 1
 
@@ -288,7 +288,7 @@ def drawOneRow(name,unix,x,y,z,xA,yA,zA,setLabels=False):
   zA.yaxis.set_label_coords(1.10,0.68)
 
 
-def drawPlot(path,year,month,day):
+def drawPlot(AUTU,year,month,day):
 
   dateString="-".join([year,month,day])  
   print("Working On: "+dateString)
@@ -296,7 +296,7 @@ def drawPlot(path,year,month,day):
   # allFiles=findFilesInOneFOlder(path,"*.txt")
   # validatedFiles=validateFilesInOneFolder(allFiles)  
 
-  validatedFiles=findFilesInServer(path,year,month,day)  
+  validatedFiles=findFilesInServer(inputPath,year,month,day)  
   
   length=len(AUTUMN_X_List)  
 
@@ -310,7 +310,7 @@ def drawPlot(path,year,month,day):
 
 
   counter=0
-  for siteName in AUTUMN_X_List+AUTUMN_List:  #To keep the sequence required
+  for siteName in requiredObsList:  #To keep the sequence required
     if siteName in validatedFiles: 
       unix,x,y,z=filePath2AUTUM_1Min(validatedFiles[siteName],7)
       print(siteName,' ',dateString)
@@ -327,7 +327,7 @@ def drawPlot(path,year,month,day):
 def validateFile(paths):
   result=[]
   for path in paths:
-    if path in AUTUMN_List+AUTUMN_X_List:
+    if path in requiredObsList:
       result.append(path)
   return result
   
@@ -355,17 +355,37 @@ def findFilesInServer(path,year,month,day):
 
 
 
+inputPath="/autumndp/L3"
+
 def checkArguments(num=5):
+  #print(sys.argv)
   length=len(sys.argv)
-  if length>=num:
-    return sys.argv[1:5]
-  if length==1:
+  if length<2:
+    print("Not enough input parameters")
+    return False
+  
+  
+  if sys.argv[1] == "AUTUMN":
+    print("{} selected.".format(sys.argv[1]))
+    requiredObsList=AUTUMN_List    
+  elif sys.argv[1] =="AUTUMNX":
+    print("{} selected.".format(sys.argv[1]))
+    requiredObsList=AUTUMN_X_List
+  else:
+    print("Invalid input {}".format(sys.argv[1]))
+    return False
+    
+    
+  #if length>=num:
+    #return sys.argv[1:5]
+  if length==2:
     date=datetime.datetime.utcnow()
     date=[date.year, date.month, date.day]
     date=list(map(strAndFill,date))
-    return [inputPath]+date    
-  if length==4:
-    return [inputPath]+sys.argv[1:4]
+    return [sys.argv[1]]+date    
+  if length==5:
+    return sys.argv[1:5]
+  
   return False
 
 def callRangeOfDate():
@@ -411,7 +431,8 @@ if __name__ =="__main__":
   # drawPlot(path,"2019","05","14")
 
   # callRangeOfDate()
-  checkArguments()
+  res=checkArguments()
+  print(res)
 
 
 
