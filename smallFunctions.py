@@ -298,50 +298,29 @@ def drawPlot(path,year,month,day):
 
   validatedFiles=findFilesInServer(path,year,month,day)  
   
-  # printDictionary(validatedFiles)
-
-  
-  # length=len(validatedFiles)  
   length=len(AUTUMN_X_List)  
 
-  # if length==0:
-  #   print("No valid Files Found : "+dateString+"\n")
-  #   return
+
   
 
   fig,ax=plt.subplots(length,3,sharex=True, sharey=True,figsize=(12,findSize(length)))  
   
-  if ax.ndim ==1:
-    ax=ax.reshape((1,3))  
 
   stylePlot(fig,ax,year,month,day)   
 
 
-  stats=[]
   counter=0
   for siteName in AUTUMN_X_List+AUTUMN_List:  #To keep the sequence required
     if siteName in validatedFiles: 
       unix,x,y,z=filePath2AUTUM_1Min(validatedFiles[siteName],7)
       print(siteName,' ',dateString)
-      # stats.append([len(unix),np.std(x)])
-      # stats.append([len(unix),np.std(y)])
-      # stats.append([len(unix),np.std(z)])
       drawOneRow(siteName,unix,x,y,z,*ax[counter,:])
     else:
       drawOneRow(siteName,[],[],[],[],*ax[counter,:])
     counter=counter+1
-  
-  #[print(x) for x in stats]
-   
-  # SDeviation=findSDeviation(stats)
-  # limit=min(SDeviation*20 ,3000)
-  # print("SDeviation: ",SDeviation)
-  # print("limit: ",limit)
-  # plt.ylim(-limit, limit) 
-
 
   plt.savefig("./tempDir/StackPlot_"+dateString+timeStamp()+"."+saveType,dpi=300,format=saveType, facecolor=fig.get_facecolor(),bbox_inches='tight')
-  # plt.show()  
+  
   plt.close()
   
 
@@ -407,9 +386,7 @@ def callRangeOfDate():
     drawPlot(*arguments)
   return None
 
-if __name__ =="__main__": 
-
-  dirName = 'tempDir' 
+def createFolder(dirName = 'tempDir' ):  
   try:
       # Create target Directory
       os.mkdir(dirName)
@@ -417,10 +394,15 @@ if __name__ =="__main__":
   except FileExistsError:
       print("Directory " , dirName ,  " already exists")
 
+if __name__ =="__main__": 
+
+
+
   # arguments=checkArguments()
   
   # path="/home/ebuntu3/#code/AUPloting_June2019/data0605"
   path='/autumndp/L3/'
+  createFolder()
   # arguments=[path,"2019","06","05"]
 
   # print(arguments)
