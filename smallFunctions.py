@@ -17,7 +17,10 @@ AUTUMN_X_List=['SALU','PUVR','INUK','KJPK','RADI','VLDR','STFL','SEPT','SCHF']
 AUTUMN_List=['INUV','FSJ','SLL','LARG','ATH','LABG','ATH','LABC','REDR','ROTH','LETH']
 requiredObsList=[]
 
-inputPath="/autumndp/L3"  #Only when number of input argument is 1
+
+inputPath="/autumndp/L3" 
+
+outputPath="/home/enson/stackPlot_Testing_Enson/outputFolder"
 
 
 #########################################################################
@@ -150,11 +153,12 @@ def findFilesInOneFOlder(path,regExp):
   os.chdir(currentPath)  
   return result
 
-def validateFilesInOneFolder(paths):
-  result=dict()
+def validateFilesInOneFolder(paths):  
+  result=dict() 
+  print(requiredObsList)
   for path in paths:
     matchResult=matchAUTUMN(path)
-    if matchResult and matchResult in AUTUMN_X_List:      
+    if matchResult and matchResult in requiredObsList:      
       result[matchResult]=path
   return result
 
@@ -291,12 +295,13 @@ def drawOneRow(name,unix,x,y,z,xA,yA,zA,setLabels=False):
 def drawPlot(AUTU,year,month,day):
 
   dateString="-".join([year,month,day])  
-  print("Working On: "+dateString)
+  # print("Working On: "+dateString)
   
   # allFiles=findFilesInOneFOlder(path,"*.txt")
   # validatedFiles=validateFilesInOneFolder(allFiles)  
 
-  validatedFiles=findFilesInServer(inputPath,year,month,day)  
+  validatedFiles=findFilesInServer(year,month,day)  
+  print(validatedFiles)
   
   length=len(AUTUMN_X_List)  
 
@@ -319,20 +324,32 @@ def drawPlot(AUTU,year,month,day):
       drawOneRow(siteName,[],[],[],[],*ax[counter,:])
     counter=counter+1
 
-  plt.savefig("./tempDir/StackPlot_"+dateString+timeStamp()+"."+saveType,dpi=300,format=saveType, facecolor=fig.get_facecolor(),bbox_inches='tight')
+  saveType="png"
+  saveName="_".join([AUTU,"SUMMARY","TGBO",dateString,"PT1M","L4"])+"."+saveType
+  path=findOutputPath(year,month,day,outputPath=outputPath)
+  createOutputFolder(path)
+  savePath=os.path.join(path,saveName)
+  plt.savefig(savePath,dpi=300,format=saveType, facecolor=fig.get_facecolor(),bbox_inches='tight')
   
   plt.close()
   
 
+def findOutputPath(year,month,day,outputPath=outputPath):
+  return os.path.join(outputPath,year,month,day)
+def createOutputFolder(path):  
+  os.makedirs(path, exist_ok=True)
+
 def validateFile(paths):
   result=[]
+  print("++++++++")
+  print(requiredObsList)
   for path in paths:
     if path in requiredObsList:
       result.append(path)
   return result
   
 
-def findFilesInServer(path,year,month,day):
+def findFilesInServer(year,month,day,path=inputPath):
   currentPath=os.getcwd() 
 
   os.chdir(path)
@@ -341,11 +358,14 @@ def findFilesInServer(path,year,month,day):
   regExp=path+"/*"
 
   obsNames=[os.path.basename(file) for file in glob.glob(regExp)]   
+  print(obsNames)
   obsNames=validateFile(obsNames)
+
+  print("obsName {}".format(obsNames))
 
   for name in obsNames:
     folderPath=os.path.join(path,name,"fluxgate",year,month,day)+"/*.txt"
-    # print(folderPath)
+    print(folderPath)
     txtFile=glob.glob(folderPath)
     if txtFile:
       result[name]=txtFile[0]
@@ -355,9 +375,10 @@ def findFilesInServer(path,year,month,day):
 
 
 
-inputPath="/autumndp/L3"
+
 
 def checkArguments(num=5):
+  global requiredObsList
   #print(sys.argv)
   length=len(sys.argv)
   if length<2:
@@ -389,13 +410,14 @@ def checkArguments(num=5):
   return False
 
 def callRangeOfDate():
+  global requiredObsList
   path=inputPath
   counter=5
   end=datetime.date.today()
-  start=datetime.datetime(2010,1,1)
+  start=datetime.datetime(2019,6,15)
   
-  while start < end:
-    print("Working on {}".format(t.strftime("%Y-%m-%d")))
+  while start.date() < end:
+    print("Working on {}".format(start.strftime("%Y-%m-%d")))
     year=strAndFill(start.year)
     month=strAndFill(start.month)
     day=strAndFill(start.day)   
@@ -403,6 +425,7 @@ def callRangeOfDate():
     start=start+datetime.timedelta(1)
     
     arguments=["AUTUMN",year,month,day]
+    requiredObsList=AUTUMN_X_List
     
     drawPlot(*arguments)
 
@@ -418,7 +441,7 @@ def callRangeOfDate():
     #drawPlot(*arguments)
   return None
 
-def createFolder(dirName = 'tempDir' ):  
+def createFolder(dirName):  
   try:
       # Create target Directory
       os.mkdir(dirName)
@@ -434,7 +457,7 @@ if __name__ =="__main__":
   
   # path="/home/ebuntu3/#code/AUPloting_June2019/data0605"
   # path='/autumndp/L3/'
-  # createFolder()
+  # createFolder(outputPath)
   # arguments=[path,"2019","06","05"]
 
   # print(arguments)
@@ -445,6 +468,7 @@ if __name__ =="__main__":
 
   # callRangeOfDate()
   res=checkArguments()
+  drawPlot(*res)
   print(res)
 
 
