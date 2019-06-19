@@ -345,7 +345,7 @@ def findFilesInServer(year,month,day,path=inputPath):
 
   for name in obsNames:
     instrumentName=os.listdir(os.path.join(path,name))[0]
-    print(instrumentName)
+    # print(instrumentName)
     folderPath=os.path.join(path,name,instrumentName,year,month,day)+"/*.txt"    
     txtFile=glob.glob(folderPath)
     if txtFile:
