@@ -11,7 +11,9 @@ import collections
 
 from fonts import *
 
-#############################
+#########################################################################
+##### Parameters
+#########################################################################
 
 AUTUMN_X_List=['SALU','PUVR','INUK','KJPK','RADI','VLDR','STFL','SEPT','SCHF']
 AUTUMN_List=['INUV','FSJ','SLL','LARG','ATH','LABG','ATH','LABC','REDR','ROTH','LETH']
@@ -22,6 +24,50 @@ inputPath="/autumndp/L3"
 
 outputPath="/home/enson/stackPlot_Testing_Enson/outputFolder"
 
+#########################################################################
+##### Style
+#########################################################################
+padding=2
+
+saveType="png"
+
+titleStyle={'fontname':'monospace',
+          'backgroundcolor':'#e2e3e5',
+       'fontweight':'bold',
+        'url':"http://google.com",
+        'fontsize':'12'           
+        } 
+
+xyzFieldStyle={'fontname':'monospace',
+               'color':'#222B29',
+               'backgroundcolor':'#F4F7F7',
+               'fontweight':'bold',
+               'url':"http://google.com",
+               'fontsize':'12'      
+        } 
+
+unit={'fontname':'monospace',
+          #'backgroundcolor':'#e2e3e5',
+       #'fontweight':'bold',        
+        'fontsize':'10'           
+        } 
+
+legendObsName={'fontname':'monospace',
+             'backgroundcolor':'#222B29',
+             'color':'#E1EAE8',
+             'fontweight':'bold',            
+             'fontsize':'12',
+             #'bbox':dict(boxstyle=larrow)
+        }  
+
+xSubTitle=unit
+
+canvasColor='#F4F7F7'
+plotColor='#A6C2BC'
+thickBorderColorV='#445753'
+thickBorderColorH='#F4F8F5'
+gridColor='#C8D9CD'
+tickColor=gridColor
 
 #########################################################################
 ##### Extract File to Data
@@ -45,7 +91,6 @@ def datetime2Unix(timeDate):
   return calendar.timegm(timeDate.timetuple())
     
 def loadData(dataPath,numSegments,delimiter=None):
-  # print(dataPath)
   file=open(dataPath,'r')
   resultArray=[]
   for line in file:
@@ -105,8 +150,7 @@ def findMidnightUnix(unix):
 def findX(unix,step):
   
   secondInHour=60*60  
-   
-  #midnightUnix=findMidnightUnix(unix[0])
+
   midnightUnix=unix
   
   stepsArray=np.arange(0,24,step)
@@ -142,25 +186,8 @@ def matchAUTUMN(s):
     return matchObj.group(1)
   else:
     return False
- 
   
-def findFilesInOneFOlder(path,regExp):
-  currentPath=os.getcwd()  
-  os.chdir(path) 
-  
-  result=[os.path.join(path,file) for file in glob.glob(regExp)]  
-  
-  os.chdir(currentPath)  
-  return result
 
-def validateFilesInOneFolder(paths):  
-  result=dict() 
-  print(requiredObsList)
-  for path in paths:
-    matchResult=matchAUTUMN(path)
-    if matchResult and matchResult in requiredObsList:      
-      result[matchResult]=path
-  return result
 
 #########################################################################
 #####Auxilary 
@@ -177,6 +204,7 @@ def strAndFill(x):
   x=str(x)
   x=x.zfill(2)
   return x
+
 #########################################################################
 ##### Drawing
 #########################################################################    
@@ -243,45 +271,11 @@ def stylePlot(fig,ax,year,month,day):
   #plt.tight_layout(pad=padding)
   plt.subplots_adjust(wspace=0.05, hspace=0.12)
   
-  #plt.autoscale()
-  
 def findSize(l,k=1.5,b=2.5):
   return l*k+b
 
-def rejectOutliers(array):
-
-  mask=[x<1000 for x in array[:,1]]
-  array=array[mask]
-
-
-  average=np.average(array[:,1])
-  std=np.std(array[:,1])
-  print(average)
-  # print(average,std)
-  limit=std*6
-  mask=[ average-limit<=x<=average+limit for x in array[:,1]]
-  # print(mask)
-  return array[mask]
-
-def findSDeviation(array):
-  array=np.array(array) 
-  array=rejectOutliers(array)
-  # [print(x) for x in array]  
-  
-  numOfData=np.sum(array[:,0])   
-  
-  temp=[n*std*std for n,std in array] 
-  SDeviation=np.sqrt(np.sum(temp)/(numOfData))
-  
-  print(SDeviation)
-  return SDeviation
-
 def drawOneRow(name,unix,x,y,z,xA,yA,zA,setLabels=False):
   
-  #lineStyles=collections.deque(['-','--','-.',':'])
-  #lineStyle=lineStyles[0]
-  #lineStyles.rotate(1)
-
   colors=['b','r','g']  
   
   xA.plot(unix,x,colors[0])  
@@ -294,31 +288,23 @@ def drawOneRow(name,unix,x,y,z,xA,yA,zA,setLabels=False):
 
 def drawPlot(AUTU,year,month,day):
 
+  print("Working on {} {} {}".format(year,month,day))
+
   dateString="-".join([year,month,day])  
-  # print("Working On: "+dateString)
-  
-  # allFiles=findFilesInOneFOlder(path,"*.txt")
-  # validatedFiles=validateFilesInOneFolder(allFiles)  
 
-  validatedFiles=findFilesInServer(year,month,day)  
-  print(validatedFiles)
+  validatedFiles=findFilesInServer(year,month,day)
   
-  length=len(AUTUMN_X_List)  
-
-
-  
+  length=len(requiredObsList) 
 
   fig,ax=plt.subplots(length,3,sharex=True, sharey=True,figsize=(12,findSize(length)))  
   
-
   stylePlot(fig,ax,year,month,day)   
-
 
   counter=0
   for siteName in requiredObsList:  #To keep the sequence required
     if siteName in validatedFiles: 
       unix,x,y,z=filePath2AUTUM_1Min(validatedFiles[siteName],7)
-      print(siteName,' ',dateString)
+      # print(siteName,' ',dateString)
       drawOneRow(siteName,unix,x,y,z,*ax[counter,:])
     else:
       drawOneRow(siteName,[],[],[],[],*ax[counter,:])
@@ -341,8 +327,6 @@ def createOutputFolder(path):
 
 def validateFile(paths):
   result=[]
-  print("++++++++")
-  print(requiredObsList)
   for path in paths:
     if path in requiredObsList:
       result.append(path)
@@ -351,26 +335,20 @@ def validateFile(paths):
 
 def findFilesInServer(year,month,day,path=inputPath):
   currentPath=os.getcwd() 
-
   os.chdir(path)
   
   result=dict()
   regExp=path+"/*"
 
-  obsNames=[os.path.basename(file) for file in glob.glob(regExp)]   
-  print(obsNames)
-  obsNames=validateFile(obsNames)
-
-  print("obsName {}".format(obsNames))
+  obsNames=[os.path.basename(file) for file in glob.glob(regExp)]
+  obsNames=validateFile(obsNames)  
 
   for name in obsNames:
-    folderPath=os.path.join(path,name,"fluxgate",year,month,day)+"/*.txt"
-    print(folderPath)
+    folderPath=os.path.join(path,name,"fluxgate",year,month,day)+"/*.txt"    
     txtFile=glob.glob(folderPath)
     if txtFile:
       result[name]=txtFile[0]
-  os.chdir(currentPath)
-  # print(result)
+  os.chdir(currentPath)  
   return result
 
 
@@ -379,7 +357,7 @@ def findFilesInServer(year,month,day,path=inputPath):
 
 def checkArguments(num=5):
   global requiredObsList
-  #print(sys.argv)
+  
   length=len(sys.argv)
   if length<2:
     print("Not enough input parameters")
@@ -414,31 +392,23 @@ def callRangeOfDate():
   path=inputPath
   counter=5
   end=datetime.date.today()
-  start=datetime.datetime(2019,6,15)
+  start=datetime.datetime(2019,6,19)
   
-  while start.date() < end:
-    print("Working on {}".format(start.strftime("%Y-%m-%d")))
+  while start.date() <= end:    
     year=strAndFill(start.year)
     month=strAndFill(start.month)
     day=strAndFill(start.day)   
     
     start=start+datetime.timedelta(1)
     
-    arguments=["AUTUMN",year,month,day]
-    requiredObsList=AUTUMN_X_List
-    
+    # arguments=["AUTUMN",year,month,day]
+    # requiredObsList=AUTUMN_X_List    
+    # drawPlot(*arguments)
+
+    arguments=["AUTUMNX",year,month,day]
+    requiredObsList=AUTUMN_X_List   
     drawPlot(*arguments)
 
-  #for i in range(counter):
-    #print("Remains: "+str(counter-i))
-    #year=strAndFill(end.year)
-    #month=strAndFill(end.month)
-    #day=strAndFill(end.day)
-    #end=end-datetime.timedelta(1)
-
-    #arguments=[path,year,month,day]
-    ## print(arguments)
-    #drawPlot(*arguments)
   return None
 
 def createFolder(dirName):  
@@ -450,26 +420,9 @@ def createFolder(dirName):
       print("Directory " , dirName ,  " already exists")
 
 if __name__ =="__main__": 
-
-
-
-  # arguments=checkArguments()
-  
-  # path="/home/ebuntu3/#code/AUPloting_June2019/data0605"
-  # path='/autumndp/L3/'
-  # createFolder(outputPath)
-  # arguments=[path,"2019","06","05"]
-
-  # print(arguments)
-  # drawPlot(*arguments)
-  # drawPlot(path,"2019","03","12")
-  # drawPlot(path,"2019","04","10")
-  # drawPlot(path,"2019","05","14")
-
-  # callRangeOfDate()
-  res=checkArguments()
-  drawPlot(*res)
-  print(res)
+  callRangeOfDate()
+  # res=checkArguments()
+  # drawPlot(*res)
 
 
 
