@@ -344,7 +344,9 @@ def findFilesInServer(year,month,day,path=inputPath):
   obsNames=validateFile(obsNames)  
 
   for name in obsNames:
-    folderPath=os.path.join(path,name,"fluxgate",year,month,day)+"/*.txt"    
+    instrumentName=os.listdir(os.path.join(path,name))[0]
+    print(instrumentName)
+    folderPath=os.path.join(path,name,instrumentName,year,month,day)+"/*.txt"    
     txtFile=glob.glob(folderPath)
     if txtFile:
       result[name]=txtFile[0]
@@ -392,7 +394,7 @@ def callRangeOfDate():
   path=inputPath
   counter=5
   end=datetime.date.today()
-  start=datetime.datetime(2019,6,19)
+  start=datetime.datetime(1998,1,1)
   
   while start.date() <= end:    
     year=strAndFill(start.year)
@@ -401,9 +403,9 @@ def callRangeOfDate():
     
     start=start+datetime.timedelta(1)
     
-    # arguments=["AUTUMN",year,month,day]
-    # requiredObsList=AUTUMN_X_List    
-    # drawPlot(*arguments)
+    arguments=["AUTUMN",year,month,day]
+    requiredObsList=AUTUMN_List    
+    drawPlot(*arguments)
 
     arguments=["AUTUMNX",year,month,day]
     requiredObsList=AUTUMN_X_List   
