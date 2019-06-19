@@ -335,7 +335,8 @@ def drawPlot(path,year,month,day):
   print("limit: ",limit)
   plt.ylim(-limit, limit)
   
-  plt.savefig("StackPlot_"+dateString+timeStamp()+"."+saveType,dpi=300,format=saveType, facecolor=fig.get_facecolor())
+
+  plt.savefig("./OutputFolder/StackPlot_"+dateString+timeStamp()+"."+saveType,dpi=300,format=saveType, facecolor=fig.get_facecolor())
   # plt.show()  
   
 
@@ -386,8 +387,8 @@ def checkArguments(num=5):
 
 def callRangeOfDate():
   path=inputPath
-  counter=100
-  end=datetime.datetime(2019,6,14)
+  counter=1
+  end=datetime.datetime(2019,5,14)
 
   for i in range(counter):
     print("Remains: "+str(counter-i))
