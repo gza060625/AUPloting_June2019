@@ -281,7 +281,7 @@ def drawOneRow(name,unix,x,y,z,xA,yA,zA,setLabels=False):
   
   xA.plot(unix,x,colors[0])  
   yA.plot(unix,y,colors[1])
-  zA.plot(unix,x,colors[2])
+  zA.plot(unix,z,colors[2])
   
   zA.set_ylabel(name, rotation=0, labelpad=30,**legendObsName)  
   zA.yaxis.set_label_coords(1.10,0.68)
@@ -330,13 +330,13 @@ def drawPlot(path,year,month,day):
   #[print(x) for x in stats]
    
   SDeviation=findSDeviation(stats)
-  limit=min(SDeviation*15 ,2000)
+  limit=min(SDeviation*20 ,3000)
   print("SDeviation: ",SDeviation)
   print("limit: ",limit)
-  plt.ylim(-limit, limit)
-  
+  # plt.ylim(-limit, limit) 
 
-  plt.savefig("./OutputFolder/StackPlot_"+dateString+timeStamp()+"."+saveType,dpi=300,format=saveType, facecolor=fig.get_facecolor())
+
+  plt.savefig("./tempDir/StackPlot_"+dateString+timeStamp()+"."+saveType,dpi=300,format=saveType, facecolor=fig.get_facecolor(),bbox_inches='tight')
   # plt.show()  
   
 
@@ -387,8 +387,8 @@ def checkArguments(num=5):
 
 def callRangeOfDate():
   path=inputPath
-  counter=1
-  end=datetime.datetime(2019,5,14)
+  counter=120
+  end=datetime.datetime(2019,6,14)
 
   for i in range(counter):
     print("Remains: "+str(counter-i))
@@ -403,6 +403,14 @@ def callRangeOfDate():
   return None
 
 if __name__ =="__main__": 
+
+  dirName = 'tempDir' 
+  try:
+      # Create target Directory
+      os.mkdir(dirName)
+      print("Directory " , dirName ,  " Created ") 
+  except FileExistsError:
+      print("Directory " , dirName ,  " already exists")
 
   # arguments=checkArguments()
   
