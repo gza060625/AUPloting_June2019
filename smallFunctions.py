@@ -356,7 +356,6 @@ def findFilesInServer(path,year,month,day):
 
 
 def checkArguments(num=5):
-
   length=len(sys.argv)
   if length>=num:
     return sys.argv[1:5]
@@ -371,7 +370,7 @@ def checkArguments(num=5):
 
 def callRangeOfDate():
   path=inputPath
-  counter=100
+  counter=5
   end=datetime.datetime(2019,6,14)
 
   for i in range(counter):
@@ -401,8 +400,8 @@ if __name__ =="__main__":
   # arguments=checkArguments()
   
   # path="/home/ebuntu3/#code/AUPloting_June2019/data0605"
-  path='/autumndp/L3/'
-  createFolder()
+  # path='/autumndp/L3/'
+  # createFolder()
   # arguments=[path,"2019","06","05"]
 
   # print(arguments)
@@ -411,7 +410,8 @@ if __name__ =="__main__":
   # drawPlot(path,"2019","04","10")
   # drawPlot(path,"2019","05","14")
 
-  callRangeOfDate()
+  # callRangeOfDate()
+  checkArguments()
 
 
 
