@@ -391,18 +391,31 @@ def checkArguments(num=5):
 def callRangeOfDate():
   path=inputPath
   counter=5
-  end=datetime.datetime(2019,6,14)
-
-  for i in range(counter):
-    print("Remains: "+str(counter-i))
-    year=strAndFill(end.year)
-    month=strAndFill(end.month)
-    day=strAndFill(end.day)
-    end=end-datetime.timedelta(1)
-
-    arguments=[path,year,month,day]
-    # print(arguments)
+  end=datetime.date.today()
+  start=datetime.datetime(2010,1,1)
+  
+  while start < end:
+    print("Working on {}".format(t.strftime("%Y-%m-%d")))
+    year=strAndFill(start.year)
+    month=strAndFill(start.month)
+    day=strAndFill(start.day)   
+    
+    start=start+datetime.timedelta(1)
+    
+    arguments=["AUTUMN",year,month,day]
+    
     drawPlot(*arguments)
+
+  #for i in range(counter):
+    #print("Remains: "+str(counter-i))
+    #year=strAndFill(end.year)
+    #month=strAndFill(end.month)
+    #day=strAndFill(end.day)
+    #end=end-datetime.timedelta(1)
+
+    #arguments=[path,year,month,day]
+    ## print(arguments)
+    #drawPlot(*arguments)
   return None
 
 def createFolder(dirName = 'tempDir' ):  
