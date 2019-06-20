@@ -97,7 +97,7 @@ def loadData(dataPath,numSegments,delimiter=None):
     if validateLine(line,numSegments):      
       line=line.split(delimiter)
       resultArray.append(line)   
-  print("loadData: {} ".format(len(resultArray)))   
+  # print("loadData: {} ".format(len(resultArray)))   
   return np.array(resultArray)
 
 def stripTimetoInteger(time):
@@ -134,14 +134,14 @@ def extractInfoFromAUTUMN_1Min(array):
   y=offsetByUTC00(y)
   z=offsetByUTC00(z)  
   
-  print("extractInfoFromAUTUMN_1Min: {}".format(len(unix)))
+  # print("extractInfoFromAUTUMN_1Min: {}".format(len(unix)))
   return unix,x,y,z
 
 def filePath2AUTUM_1Min(path,numSegments):
-  print("TagA: {}".format(path))
+  # print("TagA: {}".format(path))
   temp=loadData(path,numSegments)
   unix,x,y,z=extractInfoFromAUTUMN_1Min(temp)
-  print("filePath2AUTUM_1Min: {}".format(len(unix)))
+  # print("filePath2AUTUM_1Min: {}".format(len(unix)))
   return unix,x,y,z
 
 #########################################################################
@@ -279,7 +279,7 @@ def stylePlot(fig,ax,year,month,day):
   #plt.tight_layout(pad=padding)
   plt.subplots_adjust(wspace=0.05, hspace=0.12)
   
-def findSize(l,k=1.5,b=2.5):
+def findPlotSize(l,k=1.5,b=2.5):
   return l*k+b
 
 def drawOneRow(name,unix,x,y,z,xA,yA,zA,setLabels=False):
@@ -300,20 +300,19 @@ def drawPlot(AUTU,year,month,day):
 
   dateString="-".join([year,month,day])  
 
-  validatedFiles=findFilesInServer(year,month,day)
+  txtInOneDay=findAllTxtInServer(year,month,day)
   
-  length=len(requiredObsList) 
-
-  fig,ax=plt.subplots(length,3,sharex=True, sharey=True,figsize=(12,findSize(length)))  
+  length=len(requiredObsList)
+  fig,ax=plt.subplots(length,3,sharex=True, sharey=True,figsize=(12,findPlotSize(length)))  
   
   stylePlot(fig,ax,year,month,day)   
 
   counter=0
   for siteName in requiredObsList:  #To keep the sequence required
-    if siteName in validatedFiles: 
-      unix,x,y,z=filePath2AUTUM_1Min(validatedFiles[siteName],7)
+    if siteName in txtInOneDay: 
+      unix,x,y,z=filePath2AUTUM_1Min(txtInOneDay[siteName],7)
       # print(siteName,' ',dateString)
-      print("Site: {} Unix: {} ".format(siteName,len(unix)))
+      # print("Site: {} Unix: {} ".format(siteName,len(unix)))
       drawOneRow(siteName,unix,x,y,z,*ax[counter,:])
     else:
       drawOneRow(siteName,[],[],[],[],*ax[counter,:])
@@ -334,7 +333,7 @@ def findOutputPath(year,month,day,outputPath=outputPath):
 def createOutputFolder(path):  
   os.makedirs(path, exist_ok=True)
 
-def validateFile(paths):
+def checkWithRequiredList(paths):
   result=[]
   for path in paths:
     if path in requiredObsList:
@@ -342,7 +341,7 @@ def validateFile(paths):
   return result
   
 
-def findFilesInServer(year,month,day,path=inputPath):
+def findAllTxtInServer(year,month,day,path=inputPath):
   currentPath=os.getcwd() 
   os.chdir(path)
   
@@ -350,7 +349,7 @@ def findFilesInServer(year,month,day,path=inputPath):
   regExp=path+"/*"
 
   obsNames=[os.path.basename(file) for file in glob.glob(regExp)]
-  obsNames=validateFile(obsNames)  
+  obsNames=checkWithRequiredList(obsNames)  
 
   for name in obsNames:
     instrumentName=os.listdir(os.path.join(path,name))[0]
@@ -432,9 +431,10 @@ def createFolder(dirName):
       print("Directory " , dirName ,  " already exists")
 
 if __name__ =="__main__": 
-  # callRangeOfDate()
-  res=checkArguments()
-  drawPlot(*res)
+  callRangeOfDate()
+  # print("\n\n\n")
+  # res=checkArguments()
+  # drawPlot(*res)
 
 
 
