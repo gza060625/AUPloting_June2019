@@ -96,7 +96,8 @@ def loadData(dataPath,numSegments,delimiter=None):
   for line in file:
     if validateLine(line,numSegments):      
       line=line.split(delimiter)
-      resultArray.append(line)      
+      resultArray.append(line)   
+  # print("resultArray: {} ".format(len(resultArray)))   
   return np.array(resultArray)
 
 def stripTimetoInteger(time):
@@ -112,6 +113,9 @@ def offsetByUTC00(array):
 
 
 def extractInfoFromAUTUMN_1Min(array):
+  # print(len(array))
+  if len(array)==0:
+    return [],[],[],[]
   date=array[:,0]
   
   time=array[:,1]  
@@ -133,6 +137,7 @@ def extractInfoFromAUTUMN_1Min(array):
   return unix,x,y,z
 
 def filePath2AUTUM_1Min(path,numSegments):
+  # print(path)
   temp=loadData(path,numSegments)
   return extractInfoFromAUTUMN_1Min(temp)
 
@@ -345,11 +350,12 @@ def findFilesInServer(year,month,day,path=inputPath):
 
   for name in obsNames:
     instrumentName=os.listdir(os.path.join(path,name))[0]
-    # print(instrumentName)
+    
     folderPath=os.path.join(path,name,instrumentName,year,month,day)+"/*.txt"    
     txtFile=glob.glob(folderPath)
     if txtFile:
       result[name]=txtFile[0]
+
   os.chdir(currentPath)  
   return result
 
@@ -394,7 +400,7 @@ def callRangeOfDate():
   path=inputPath
   counter=5
   end=datetime.date.today()
-  start=datetime.datetime(1998,1,1)
+  start=datetime.datetime(1999,5,1)
   
   while start.date() <= end:    
     year=strAndFill(start.year)
