@@ -97,7 +97,7 @@ def loadData(dataPath,numSegments,delimiter=None):
     if validateLine(line,numSegments):      
       line=line.split(delimiter)
       resultArray.append(line)   
-  # print("resultArray: {} ".format(len(resultArray)))   
+  print("loadData: {} ".format(len(resultArray)))   
   return np.array(resultArray)
 
 def stripTimetoInteger(time):
@@ -133,13 +133,16 @@ def extractInfoFromAUTUMN_1Min(array):
   x=offsetByUTC00(x)
   y=offsetByUTC00(y)
   z=offsetByUTC00(z)  
- 
+  
+  print("extractInfoFromAUTUMN_1Min: {}".format(len(unix)))
   return unix,x,y,z
 
 def filePath2AUTUM_1Min(path,numSegments):
-  # print(path)
+  print("TagA: {}".format(path))
   temp=loadData(path,numSegments)
-  return extractInfoFromAUTUMN_1Min(temp)
+  unix,x,y,z=extractInfoFromAUTUMN_1Min(temp)
+  print("filePath2AUTUM_1Min: {}".format(len(unix)))
+  return unix,x,y,z
 
 #########################################################################
 ##### Lables
@@ -282,7 +285,7 @@ def findSize(l,k=1.5,b=2.5):
 def drawOneRow(name,unix,x,y,z,xA,yA,zA,setLabels=False):
   
   colors=['b','r','g']  
-  
+  print("Draw One Plot Site:{} Unix:{} x:{}".format(name,len(unix),len(x)))
   xA.plot(unix,x,colors[0])  
   yA.plot(unix,y,colors[1])
   zA.plot(unix,z,colors[2])
@@ -310,6 +313,7 @@ def drawPlot(AUTU,year,month,day):
     if siteName in validatedFiles: 
       unix,x,y,z=filePath2AUTUM_1Min(validatedFiles[siteName],7)
       # print(siteName,' ',dateString)
+      print("Site: {} Unix: {} ".format(siteName,len(unix)))
       drawOneRow(siteName,unix,x,y,z,*ax[counter,:])
     else:
       drawOneRow(siteName,[],[],[],[],*ax[counter,:])
@@ -400,7 +404,7 @@ def callRangeOfDate():
   path=inputPath
   counter=5
   end=datetime.date.today()
-  start=datetime.datetime(1999,5,1)
+  start=datetime.datetime(2000,1,1)
   
   while start.date() <= end:    
     year=strAndFill(start.year)
@@ -428,9 +432,9 @@ def createFolder(dirName):
       print("Directory " , dirName ,  " already exists")
 
 if __name__ =="__main__": 
-  callRangeOfDate()
-  # res=checkArguments()
-  # drawPlot(*res)
+  # callRangeOfDate()
+  res=checkArguments()
+  drawPlot(*res)
 
 
 
