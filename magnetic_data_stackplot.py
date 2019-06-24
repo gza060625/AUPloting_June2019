@@ -40,8 +40,8 @@ requiredObsList=[]
 
 inputPath="/autumndp/L3" 
 
-# outputPath="/home/enson/stackPlot_Testing_Enson/outputFolder"
-outputPath="/autumndp/L4"
+outputPath="/home/enson/stackPlot_Testing_Enson/outputFolder"
+# outputPath="/autumndp/L4"
 
 
 #########################################################################
@@ -297,9 +297,9 @@ def stylePlot(fig,ax,year,month,day):
   
   
   #plt.tight_layout(pad=padding)
-  plt.subplots_adjust(wspace=0.05, hspace=0.00)
+  plt.subplots_adjust(wspace=0.05, hspace=0.03)
   
-def findPlotSize(l,k=1.5,b=2.5):
+def findPlotSize(l,k=1.1,b=2.5):
   return l*k+b
 
 def drawOneRow(name,unix,x,y,z,xA,yA,zA,setLabels=False):
@@ -323,7 +323,8 @@ def drawPlot(AUTU,year,month,day):
   txtInOneDay=findAllTxtInServer(year,month,day)
   
   length=len(requiredObsList)
-  fig,ax=plt.subplots(length,3,sharex=True, sharey=True,figsize=(18,findPlotSize(length)))  
+  # fig,ax=plt.subplots(length,3,sharex=True, sharey=True,figsize=(18,findPlotSize(length)))  
+  fig,ax=plt.subplots(length,3,sharex=True, sharey=True,figsize=(findPlotSize(length),length))  
   
   stylePlot(fig,ax,year,month,day)   
 
@@ -414,7 +415,7 @@ def checkArguments(num=5):
     date=list(map(strAndFill,date))
     return [sys.argv[1]]+date    
   if length==5:
-    return sys.argv[1:5]
+    return sys.argv[1:2]+[str(int(x)).zfill(2) for x in sys.argv[2:5]]
   
   return False
 
