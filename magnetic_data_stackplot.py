@@ -319,8 +319,8 @@ def drawPlot(AUTU,year,month,day):
   print("Working on {} {} {}".format(year,month,day))
 
   dateString="-".join([year,month,day])  
-
   txtInOneDay=findAllTxtInServer(year,month,day)
+  
   
   length=len(requiredObsList)
   # fig,ax=plt.subplots(length,3,sharex=True, sharey=True,figsize=(18,findPlotSize(length)))  
