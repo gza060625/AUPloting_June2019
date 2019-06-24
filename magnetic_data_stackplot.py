@@ -313,8 +313,19 @@ def drawOneRow(name,unix,x,y,z,xA,yA,zA,setLabels=False):
   zA.set_ylabel(name, rotation=0, labelpad=30,**legendObsName)  
   zA.yaxis.set_label_coords(1.10,0.68)
 
+def checkAKUL(requiredObsList,year,month,day):
+  year=int(year)
+  month=int(month)
+  day=int(day)
+  requiredDay=datetime.datetime(year,month,day)
+  cutoffDay=datetime.datetime(2016,4,25)
+  if (requiredDay>cutoffDay) and 'AKUL' in requiredObsList:
+    requiredObsList.remove('AKUL')
+  return requiredObsList
 
 def drawPlot(AUTU,year,month,day):
+  global requiredObsList
+  requiredObsList=checkAKUL(requiredObsList,year,month,day)
 
   print("Working on {} {} {}".format(year,month,day))
 
@@ -387,8 +398,11 @@ def findAllTxtInServer(year,month,day,path=inputPath):
 
 
 
+
 def checkArguments(num=5):
   global requiredObsList
+  
+  
   
   length=len(sys.argv)
   if length<2:
@@ -401,7 +415,7 @@ def checkArguments(num=5):
     requiredObsList=AUTUMN_List    
   elif sys.argv[1] =="AUTUMNX":
     print("{} selected.".format(sys.argv[1]))
-    requiredObsList=AUTUMN_X_List
+    requiredObsList=AUTUMN_X_List    
   else:
     print("Invalid input {}".format(sys.argv[1]))
     return False
@@ -438,7 +452,8 @@ def callRangeOfDate():
     drawPlot(*arguments)
 
     arguments=["AUTUMNX",year,month,day]
-    requiredObsList=AUTUMN_X_List   
+    requiredObsList=AUTUMN_X_List  
+
     drawPlot(*arguments)
 
   return None
