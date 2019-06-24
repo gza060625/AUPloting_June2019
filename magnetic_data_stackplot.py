@@ -33,8 +33,8 @@ from fonts import *
 ##### Parameters
 #########################################################################
 
-AUTUMN_X_List=['SALU','PUVR','INUK','KJPK','RADI','VLDR','STFL','SEPT','SCHF']
-AUTUMN_List=['INUV','FSJ','SLL','LARG','ATH','LABG','ATH','LABC','REDR','ROTH','LETH']
+AUTUMN_X_List=['SALU','AKUL','PUVR','INUK','KJPK','RADI','VLDR','STFL','SEPT','SCHF']
+AUTUMN_List=['INUV','FSJ','SLL','LARG','ATH','LABC','REDR','ROTH','LETH']
 requiredObsList=[]
 
 
