@@ -40,7 +40,7 @@ requiredObsList=[]
 
 inputPath="/autumndp/L3" 
 
-#outputPath="/home/enson/stackPlot_Testing_Enson/outputFolder"
+# outputPath="/home/enson/stackPlot_Testing_Enson/outputFolder"
 outputPath="/autumndp/L4"
 
 
@@ -343,7 +343,7 @@ def drawPlot(AUTU,year,month,day):
   path=findOutputPath(year,month,day,outputPath=outputPath)
   createOutputFolder(path)
   savePath=os.path.join(path,saveName)
-  plt.savefig(savePath,dpi=30,format=saveType, facecolor=fig.get_facecolor(),bbox_inches='tight')
+  plt.savefig(savePath,dpi=70,format=saveType, facecolor=fig.get_facecolor(),bbox_inches='tight')
   
   plt.close()
   
