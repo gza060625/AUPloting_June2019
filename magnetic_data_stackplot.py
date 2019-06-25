@@ -65,7 +65,7 @@ titleStyle={'fontname':'monospace',
 
 xyzFieldStyle={'fontname':'monospace',
                'color':'#222B29',
-               'backgroundcolor':'#F4F7F7',
+               'backgroundcolor':'#ffffff',
                'fontweight':'bold',
                'url':"http://google.com",
                'fontsize':'12'      
@@ -78,8 +78,8 @@ unit={'fontname':'monospace',
         } 
 
 legendObsName={'fontname':'monospace',
-             'backgroundcolor':'#222B29',
-             'color':'#E1EAE8',
+             'backgroundcolor':'#ffffff',
+             'color':'#222B29',
              'fontweight':'bold',            
              'fontsize':'12',
              #'bbox':dict(boxstyle=larrow)
@@ -87,11 +87,11 @@ legendObsName={'fontname':'monospace',
 
 xSubTitle=unit
 
-canvasColor='#F4F7F7'
-plotColor='#A6C2BC'
+canvasColor='#FFFFFF'
+plotColor='#FFFFFF'
 thickBorderColorV='#445753'
-thickBorderColorH='#F4F8F5'
-gridColor='#C8D9CD'
+thickBorderColorH='#545654'
+gridColor='#222B29'
 tickColor=gridColor
 
 #########################################################################
@@ -258,21 +258,24 @@ def stylePlot(fig,ax,year,month,day):
     subplot.set_facecolor(plotColor)
     
     subplot.grid(color=gridColor)
+    subplot.grid(which='minor', alpha=0.2)
+    subplot.grid(which='major', alpha=1,linestyle=':')
+  
     
     subplot.spines['right'].set_visible(False)
     
     subplot.spines['top'].set_visible(False) 
     
     subplot.spines['bottom'].set_color(thickBorderColorH)
-    subplot.spines['bottom'].set_linewidth(6)
-    subplot.spines['bottom'].set_linestyle("dashed")
+    subplot.spines['bottom'].set_linewidth(2)
+    subplot.spines['bottom'].set_linestyle("solid")
     
-    subplot.spines['left'].set_linewidth(3)
+    subplot.spines['left'].set_linewidth(2)
     subplot.spines['left'].set_color(thickBorderColorV)
     
   for col in range(colNum):
     subplot=ax[rowNum-1][col]
-    subplot.spines['bottom'].set_linewidth(3)
+    subplot.spines['bottom'].set_linewidth(2)
     subplot.spines['bottom'].set_visible(True) 
     subplot.spines['bottom'].set_color(thickBorderColorV)
     subplot.spines['bottom'].set_linestyle("solid")
@@ -361,6 +364,7 @@ def drawPlot(AUTU,year,month,day):
   saveName="_".join([AUTU,"SUMMARY","TGBO",dateString,"PT1M","L4"])+"."+saveType
   path=findOutputPath(year,month,day,outputPath=outputPath)
   createOutputFolder(path)
+  path="/home/enson/stackPlot_Testing_Enson"
   savePath=os.path.join(path,saveName)
   plt.savefig(savePath,dpi=70,format=saveType, facecolor=fig.get_facecolor(),bbox_inches='tight')
   
