@@ -17,6 +17,11 @@
 # Plot a specific date 
 # magnetic_data_stackplot.py <PROJECT> <YYYY> <MM> <DD>
 # magnetic_data_stackplot.py AUTUMNX 2019 02 29
+#
+# Plot a specific range of dates 
+# magnetic_data_stackplot.py <PROJECT> <YYYY> <MM> <DD> <PROJECT> <YYYY> <MM> <DD>
+# magnetic_data_stackplot.py AUTUMNX 2019 02 29 2019 02 29
+# Note takes <PROJECT> as one parameter, but will plots both projects
 ################################################################################
 
 import numpy as np
@@ -27,7 +32,7 @@ import datetime,calendar
 import glob, os,sys
 import collections
 
-from fonts import *
+#from fonts import *
 
 #########################################################################
 ##### Parameters
@@ -41,7 +46,7 @@ requiredObsList=[]
 inputPath="/autumndp/L3" 
 
 outputPath="/home/enson/stackPlot_Testing_Enson/outputFolder"
-# outputPath="/autumndp/L4"
+#outputPath="/autumndp/L4"
 
 
 #########################################################################
@@ -324,6 +329,8 @@ def checkAKUL(requiredObsList,year,month,day):
   return requiredObsList
 
 def drawPlot(AUTU,year,month,day):
+  #print("TestingMode: {} {} {} {}".format(AUTU,year,month,day))
+  #return
   global requiredObsList
   requiredObsList=checkAKUL(requiredObsList,year,month,day)
 
@@ -399,14 +406,14 @@ def findAllTxtInServer(year,month,day,path=inputPath):
 
 
 
-def checkArguments(num=5):
-  global requiredObsList
+def checkArguments():
+  global requiredObsList  
   
-  
+  print(sys.argv)
   
   length=len(sys.argv)
-  if length<2:
-    print("Not enough input parameters")
+  if length<2 or 2<length<5 or 5<length<8:    
+    print("Invalid Input ")
     return False
   
   
@@ -418,29 +425,38 @@ def checkArguments(num=5):
     requiredObsList=AUTUMN_X_List    
   else:
     print("Invalid input {}".format(sys.argv[1]))
-    return False
-    
-    
-  #if length>=num:
-    #return sys.argv[1:5]
+    return False    
+
   if length==2:
     date=datetime.datetime.utcnow()
     date=[date.year, date.month, date.day]
     date=list(map(strAndFill,date))
-    return [sys.argv[1]]+date    
+    arguments=[sys.argv[1]]+date
+    drawPlot(*arguments)
+    return     
   if length==5:
-    return sys.argv[1:2]+[str(int(x)).zfill(2) for x in sys.argv[2:5]]
+    arguments=sys.argv[1:2]+[str(int(x)).zfill(2) for x in sys.argv[2:5]]
+    drawPlot(*arguments)
+    return 
+  
+  if length==8:
+    arguments=sys.argv[1:2]+[int(x) for x in sys.argv[2:8]]    
+    callRangeOfDate(*arguments)
+    
+    return   
   
   return False
 
-def callRangeOfDate():
+def callRangeOfDate(AUTU,ayear,amonth,aday,byear,bmonth,bday):
   global requiredObsList
-  path=inputPath
-  counter=5
-  end=datetime.date.today()
-  start=datetime.datetime(2000,1,1)
   
-  while start.date() <= end:    
+  path=inputPath
+  #counter=5
+  #end=datetime.date.today()
+  start=datetime.datetime(ayear,amonth,aday)
+  end=datetime.datetime(byear,bmonth,bday)
+  
+  while start.date() <= end.date():    
     year=strAndFill(start.year)
     month=strAndFill(start.month)
     day=strAndFill(start.day)   
@@ -467,13 +483,8 @@ def createFolder(dirName):
       print("Directory " , dirName ,  " already exists")
 
 if __name__ =="__main__": 
-  # callRangeOfDate()
-  # print("\n\n\n")
-  res=checkArguments()
-  if res:
-    drawPlot(*res)
-  else:
-    print("Invalid Input")
+
+  checkArguments()
 
 
 
