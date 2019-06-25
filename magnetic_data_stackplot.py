@@ -364,7 +364,7 @@ def drawPlot(AUTU,year,month,day):
   saveName="_".join([AUTU,"SUMMARY","TGBO",dateString,"PT1M","L4"])+"."+saveType
   path=findOutputPath(year,month,day,outputPath=outputPath)
   createOutputFolder(path)
-  path="/home/enson/stackPlot_Testing_Enson"
+  # path="/home/enson/stackPlot_Testing_Enson"
   savePath=os.path.join(path,saveName)
   plt.savefig(savePath,dpi=70,format=saveType, facecolor=fig.get_facecolor(),bbox_inches='tight')
   
