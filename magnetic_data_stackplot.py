@@ -272,13 +272,17 @@ def stylePlot(fig,ax,year,month,day):
     subplot.set_facecolor(plotColor)
     
     subplot.grid(color=gridColor)
-    subplot.grid(which='minor', alpha=0.2)
+    subplot.grid(which='minor', alpha=0.5)
     subplot.grid(which='major', alpha=1,linestyle=':')
   
     
     # subplot.spines['right'].set_visible(False)
     
-    subplot.spines['top'].set_visible(False) 
+    # subplot.spines['top'].set_visible(False) 
+
+    subplot.spines['top'].set_color(thickBorderColorH)
+    subplot.spines['top'].set_linewidth(borderOut)
+    subplot.spines['top'].set_linestyle("solid")
     
     subplot.spines['bottom'].set_color(thickBorderColorH)
     subplot.spines['bottom'].set_linewidth(borderOut)
@@ -289,6 +293,8 @@ def stylePlot(fig,ax,year,month,day):
 
     subplot.spines['right'].set_linewidth(borderOut)
     subplot.spines['right'].set_color(thickBorderColorV)
+
+
     
   for col in range(colNum):
     subplot=ax[rowNum-1][col]
@@ -310,10 +316,17 @@ def stylePlot(fig,ax,year,month,day):
   lastRow=ax[-1,:] 
   for axis in lastRow: 
     axis.set_xlabel("UTC in Hours  "+dateStr,**xSubTitle)
+    axis.tick_params(axis='x',which='minor',bottom=True,length=2,color='black',width=1)
+    axis.tick_params(axis='x',which='major',bottom=True,length=6,color='black',width=2)
 
   firstRow=ax[0,:] 
   for axis in firstRow: 
     axis.spines['top'].set_visible(True) 
+    axis.tick_params(axis='x',which='minor',top=True,length=2,color='black',width=1)
+    axis.tick_params(axis='x',which='major',top=True,length=6,color='black',width=2)
+
+
+
 
 
     
@@ -328,7 +341,7 @@ def stylePlot(fig,ax,year,month,day):
   
   
   #plt.tight_layout(pad=padding)
-  plt.subplots_adjust(wspace=0.05, hspace=0.03)
+  plt.subplots_adjust(wspace=0.05, hspace=0.2)
   
 def findPlotSize(l,k=1.1,b=2.5):
   return l*k+b
