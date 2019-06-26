@@ -32,6 +32,9 @@ import datetime,calendar
 import glob, os,sys
 import collections
 
+from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,
+                               AutoMinorLocator)
+
 #from fonts import *
 
 #########################################################################
@@ -208,6 +211,8 @@ def setX(ax,date,step=4):
   
   ax.set_xlim(unix,unix+60*60*24)
 
+  # ax.xaxis.set_minor_locator()
+
 #########################################################################
 ##### File Management
 #########################################################################
@@ -364,7 +369,7 @@ def drawPlot(AUTU,year,month,day):
   saveName="_".join([AUTU,"SUMMARY","TGBO",dateString,"PT1M","L4"])+"."+saveType
   path=findOutputPath(year,month,day,outputPath=outputPath)
   createOutputFolder(path)
-  # path="/home/enson/stackPlot_Testing_Enson"
+  path="/home/enson/stackPlot_Testing_Enson"
   savePath=os.path.join(path,saveName)
   plt.savefig(savePath,dpi=70,format=saveType, facecolor=fig.get_facecolor(),bbox_inches='tight')
   
