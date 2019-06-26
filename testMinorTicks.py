@@ -55,9 +55,6 @@ outputPath="/home/enson/stackPlot_Testing_Enson/outputFolder"
 #########################################################################
 ##### Style
 #########################################################################
-
-borderOut=2
-borderIn=1
 padding=2
 
 saveType="png"
@@ -213,14 +210,8 @@ def setX(ax,date,step=4):
   ax.set_xticklabels(labels)    
   
   ax.set_xlim(unix,unix+60*60*24)
-  ml = MultipleLocator(60*60)
-  # plt.plot(a)
-  # plt.axes().yaxis.set_minor_locator(ml)
-  # plt.show()
-  ax.xaxis.set_minor_locator(ml)
-  # ax.xaxis.grid(True, which='minor')
 
-  # ax.xaxis.set_minor_locator(ticks-100)
+  # ax.xaxis.set_minor_locator()
 
 #########################################################################
 ##### File Management
@@ -276,19 +267,16 @@ def stylePlot(fig,ax,year,month,day):
     subplot.grid(which='major', alpha=1,linestyle=':')
   
     
-    # subplot.spines['right'].set_visible(False)
+    subplot.spines['right'].set_visible(False)
     
     subplot.spines['top'].set_visible(False) 
     
     subplot.spines['bottom'].set_color(thickBorderColorH)
-    subplot.spines['bottom'].set_linewidth(borderOut)
+    subplot.spines['bottom'].set_linewidth(2)
     subplot.spines['bottom'].set_linestyle("solid")
     
-    subplot.spines['left'].set_linewidth(borderOut)
+    subplot.spines['left'].set_linewidth(2)
     subplot.spines['left'].set_color(thickBorderColorV)
-
-    subplot.spines['right'].set_linewidth(borderOut)
-    subplot.spines['right'].set_color(thickBorderColorV)
     
   for col in range(colNum):
     subplot=ax[rowNum-1][col]
@@ -298,24 +286,18 @@ def stylePlot(fig,ax,year,month,day):
     subplot.spines['bottom'].set_linestyle("solid")
     
   
-  ax[0][0].set_title("X-Field",pad=12,**xyzFieldStyle)
-  ax[0][1].set_title("Y-Field",pad=12,**xyzFieldStyle)
-  ax[0][2].set_title("Z-Field",pad=12,**xyzFieldStyle)
+  ax[0][0].set_title("X-Field",pad=8,**xyzFieldStyle)
+  ax[0][1].set_title("Y-Field",pad=8,**xyzFieldStyle)
+  ax[0][2].set_title("Z-Field",pad=8,**xyzFieldStyle)
   
   firstCol=ax[:,0]
   for axis in firstCol:
-    axis.set_ylabel("nt", labelpad=10,rotation=0,**unit) 
+    axis.set_ylabel("nt", labelpad=10,rotation=0,**unit)
 
     
   lastRow=ax[-1,:] 
   for axis in lastRow: 
     axis.set_xlabel("UTC in Hours  "+dateStr,**xSubTitle)
-
-  firstRow=ax[0,:] 
-  for axis in firstRow: 
-    axis.spines['top'].set_visible(True) 
-
-
     
   #############################Plot Titles################################# 
   #superPlot=fig.add_subplot(111, frameon=False)
