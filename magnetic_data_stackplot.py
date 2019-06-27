@@ -35,8 +35,6 @@ import collections
 from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,
                                AutoMinorLocator)
 
-#from fonts import *
-
 #########################################################################
 ##### Parameters
 #########################################################################
@@ -48,8 +46,8 @@ requiredObsList=[]
 
 inputPath="/autumndp/L3" 
 
-outputPath="/home/enson/stackPlot_Testing_Enson/outputFolder"
-#outputPath="/autumndp/L4"
+# outputPath="/home/enson/stackPlot_Testing_Enson/outputFolder"
+outputPath="/autumndp/L4"
 
 
 #########################################################################
@@ -348,8 +346,8 @@ def findPlotSize(l,k=1.1,b=2.5):
 
 def drawOneRow(name,unix,x,y,z,xA,yA,zA,setLabels=False):
   
-  colors=['b','r','g']  
-  print("Draw One Plot Site:{} Unix:{} x:{}".format(name,len(unix),len(x)))
+  colors=['k','r','b']  
+  print("Plot Site:{}".format(name))
   xA.plot(unix,x,colors[0])  
   yA.plot(unix,y,colors[1])
   zA.plot(unix,z,colors[2])
@@ -400,7 +398,7 @@ def drawPlot(AUTU,year,month,day):
   saveName="_".join([AUTU,"SUMMARY","TGBO",dateString,"PT1M","L4"])+"."+saveType
   path=findOutputPath(year,month,day,outputPath=outputPath)
   createOutputFolder(path)
-  path="/home/enson/stackPlot_Testing_Enson"
+  # path="/home/enson/stackPlot_Testing_Enson"
   savePath=os.path.join(path,saveName)
   plt.savefig(savePath,dpi=70,format=saveType, facecolor=fig.get_facecolor(),bbox_inches='tight')
   
@@ -449,7 +447,7 @@ def findAllTxtInServer(year,month,day,path=inputPath):
 def checkArguments():
   global requiredObsList  
   
-  print(sys.argv)
+  # print(sys.argv)
   
   length=len(sys.argv)
   if length<2 or 2<length<5 or 5<length<8:    
