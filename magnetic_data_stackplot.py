@@ -44,10 +44,12 @@ AUTUMN_List=['INUV','FSJ','SLL','LARG','ATH','LABC','REDR','ROTH','LETH']
 requiredObsList=[]
 
 
+
+
 inputPath="/autumndp/L3" 
 
-# outputPath="/home/enson/stackPlot_Testing_Enson/outputFolder"
-outputPath="/autumndp/L4"
+outputPath="/home/enson/stackPlot_Testing_Enson/outputFolder"
+# outputPath="/autumndp/L4"
 
 
 #########################################################################
@@ -82,10 +84,10 @@ unit={'fontname':'monospace',
         } 
 
 legendObsName={'fontname':'monospace',
-             'backgroundcolor':'#ffffff',
+             'backgroundcolor':'#ffff00',
              'color':'#222B29',
              'fontweight':'bold',            
-             'fontsize':'12',
+             'fontsize':'12',             
              #'bbox':dict(boxstyle=larrow)
         }  
 
@@ -352,8 +354,20 @@ def drawOneRow(name,unix,x,y,z,xA,yA,zA,setLabels=False):
   yA.plot(unix,y,colors[1])
   zA.plot(unix,z,colors[2])
   
-  zA.set_ylabel(name, rotation=0, labelpad=30,**legendObsName)  
-  zA.yaxis.set_label_coords(1.10,0.68)
+  zA.set_ylabel(name, rotation=0, labelpad=0, verticalalignment='top',horizontalalignment='left',**legendObsName)  
+  zA.yaxis.set_label_coords(1.02,1)
+  
+  ylbl = zA.yaxis.get_label()
+  temp=ylbl.get_position()
+  print(temp)
+
+  props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+  zA.text(1.02, 0.55, "textstr", transform=zA.transAxes, fontsize=12,verticalalignment='top', horizontalalignment='left',bbox=props)
+  # zA2 = zA.twinx()
+  # zA2.xaxis.set_ticklabels([])
+  # zA2.set_ylabel("ZA2", rotation=0, labelpad=30,**legendObsName)  
+  # zA2.yaxis.set_label_coords(1,0.38)
+  # zA.text(0.05, 0.95, "TEXTBOX", transform=zA.transAxes, fontsize=14,verticalalignment='top', bbox=props)
 
 def checkAKUL(requiredObsList,year,month,day):
   year=int(year)
